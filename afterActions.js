@@ -35,9 +35,10 @@ APIS.addAfterActions(function(response) {
     }
 
     if (response.status === 200) {
-        console.log("response:",response._bodyText)
-        var text = JSON.parse(response._bodyText);
-        return text;
+        // console.log("response:",response._bodyText)
+        // var text = JSON.parse(response._bodyText);
+        // return text;
+        return response.json();
     }
 
     return response;

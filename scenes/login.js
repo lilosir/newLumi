@@ -100,11 +100,9 @@ var Login = React.createClass({
               password: value.password,
             }
           });
-        
-        console.log("after login1:",session);
         global.SESSION = await session;
-        console.log("after login2:",global.SESSION);
-        Actions.contacts({initialPage: 1});
+        console.log("after login:",global.SESSION);
+        Actions.contacts({initialPage: 0});
       }catch(e){
         console.warn("login action error:", e.message);
       }   

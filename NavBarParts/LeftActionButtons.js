@@ -33,7 +33,6 @@ var ActionButtons = React.createClass({
 	},
 
 	componentWillMount: function() {
-		// console.log("left buttons mounted")
 		GlobalEvent.trigger('left_buttons_mounted', this.setButtons, 
 			function(callback, layoutCallback) { 
 				this.onMounted = callback;

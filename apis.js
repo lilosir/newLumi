@@ -12,9 +12,13 @@ var asyncFetch = async function(url, options) {
             options: options,
         };
 
-        beforeActions.forEach(function(beforeaction) {
-            finalParams = beforeaction(finalParams);
-        });
+        for(let i = 0; i < beforeActions.length; i++) {
+            finalParams = await beforeActions[i](finalParams);
+        }
+
+        // beforeActions.forEach(function(beforeaction) {
+        //     finalParams = beforeaction(finalParams);
+        // });
 
         let response = await fetch(finalParams.url, finalParams.options);
 
@@ -22,9 +26,13 @@ var asyncFetch = async function(url, options) {
 
         var finalResponse = response;
 
-        finalResponse = await afterActions.reduce(async function(res, afteraction) {
-            return await afteraction(await res);
-        }, finalResponse);
+        for(let i = 0; i < afterActions.length; i++) {
+            finalResponse = await afterActions[i](finalResponse);
+        }
+
+        // finalResponse = await afterActions.reduce(async function(res, afteraction) {
+        //     return await afteraction(await res);
+        // }, finalResponse);
 
 
         // afterActions.forEach(function (afteraction) {

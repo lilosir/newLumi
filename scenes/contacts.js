@@ -7,13 +7,12 @@ var nav = require('../NavbarMixin');
 // var Loading = require('./loading');
 var Reload = require('./reload');
 // var MynavigationView = require('./mynavigationView');
-// var Friends = require('./friends');
-// var Recent = require('./recent');
-// var SearchFriends = require('./searchFriends');
-// var CustomTabbar = require('./customTabbar').default;
-// var TimerMixin = require('react-timer-mixin');
+var Friends = require('./friends');
+var Recent = require('./recent');
+var SearchFriends = require('./searchFriends');
+var CustomTabbar = require('./customTabbar').default;
 // var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
-// var ScrollableTabView = require('react-native-scrollable-tab-view');
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 var Icon = require('react-native-vector-icons/FontAwesome');
 
 var { 
@@ -50,9 +49,21 @@ var Contacts = React.createClass({
   },
 
   render: function() {
+    console.log('inital page:',this.props.initialPage);
     return (
-      <Reload/>
-      
+      <ScrollableTabView 
+        initialPage={this.props.initialPage} 
+        tabBarPosition="bottom" 
+        style={styles.container}
+        tabBarUnderlineColor="#f4cb0d"
+        tabBarBackgroundColor="#00437a"
+        tabBarActiveTextColor="#f4cb0d"
+        tabBarInactiveTextColor="#f4cb0d"
+        renderTabBar={() => <CustomTabbar/>}>
+        <Recent tabLabel='access-time|Recent'/>
+        <Friends tabLabel='group|Friends'/>
+        <SearchFriends tabLabel='search|Search'/>
+      </ScrollableTabView>
     )        
   },
 
