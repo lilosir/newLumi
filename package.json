@@ -1,0 +1,21 @@
+{
+  "name": "Lumi",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "dependencies": {
+    "backbone-events-standalone": "^0.2.7",
+    "node-fetch": "^1.5.2",
+    "react": "^0.14.8",
+    "react-native": "^0.24.1",
+    "react-native-material-design": "^0.3.3",
+    "react-native-router-flux": "^2.0.9",
+    "react-native-scrollable-tab-view": "^0.4.1",
+    "react-native-spinkit": "0.0.11",
+    "react-native-vector-icons": "^2.0.1",
+    "react-timer-mixin": "^0.13.3",
+    "tcomb-form-native": "^0.3.3"
+  }
+}

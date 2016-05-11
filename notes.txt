@@ -1,0 +1,4 @@
+1. drawer
+2. router allocations
+3. searchFriends return all the information!!
+4. recent fetch from server or user local 
