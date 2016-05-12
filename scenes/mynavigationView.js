@@ -17,32 +17,47 @@ const routers = [
   {
     name:'Contacts',
     icon: 'group',
-    action: function(){Actions.contacts()},
+    action: function(){      
+      this.props.openDrawer(false);
+      Actions.contacts({initialPage: 0});
+    },
   },
   {
     name:'Around Me',
     icon: 'fiber-new',
-    action: function(){Actions.contacts()},
+    action: function(){
+      this.props.openDrawer(false);
+      ctions.contacts({initialPage: 0})
+    },
   },
   {
     name:'Weather',
     icon: 'cloud',
-    action: function(){Actions.contacts()},
+    action: function(){
+      this.props.openDrawer(false);
+      Actions.contacts({initialPage: 0})
+    },
   },
   {
     name:'Bus Schedule',
     icon: 'directions-bus',
-    action: function(){Actions.contacts()},
+    action: function(){
+      this.props.openDrawer(false);
+      Actions.contacts({initialPage: 0})
+    },
   },
   {
     name:'Map',
     icon: 'map',
-    action: function(){Actions.contacts()},
+    action: function(){Actions.contacts({initialPage: 0})},
   },
   {
     name:'Me',
     icon: 'person',
-    action: function(){Actions.me()},
+    action: function(){
+      this.props.openDrawer(false);
+      Actions.me()
+    },
   },
 ];
 
@@ -55,23 +70,25 @@ var mynavigationView = React.createClass({
 
   render: function() {
     return (
-      <ScrollView style={styles.container}>
-          {routers.map((item,i)=>(
+      <View>
+        <ScrollView style={styles.container}>
+            {routers.map((item,i)=>(
 
-          <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
-            <TouchableOpacity onPress={item.action}>
-              <List            
-                primaryText={item.name}
-                primaryColor={'#00437a'}
-                leftIcon = {
-                  <Icon style={{marginTop: 10}} 
-                        name={item.icon}
-                        color={'#00437a'}/>
-                }/>
-            </TouchableOpacity>
-          </View>
-          ))}
-      </ScrollView>
+            <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
+              <TouchableOpacity onPress={item.action.bind(this)}>
+                <List            
+                  primaryText={item.name}
+                  primaryColor={'#00437a'}
+                  leftIcon = {
+                    <Icon style={{marginTop: 10}} 
+                          name={item.icon}
+                          color={'#00437a'}/>
+                  }/>
+              </TouchableOpacity>
+            </View>
+            ))}
+        </ScrollView>
+      </View>
     )
   },
 });
@@ -79,26 +96,8 @@ var mynavigationView = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'flex-start',
-    marginTop: 57,
     backgroundColor: '#F5FCFF',
   },
 });
 
 module.exports = mynavigationView;
-      
-    // {routers.map((item,i)=>(
-
-    //     <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
-    //       <TouchableOpacity onPress={item.action}>
-    //         <List            
-    //           primaryText={item.name}
-    //           primaryColor={'#00437a'}
-    //           leftIcon = {
-    //             <Icon style={{marginTop: 10}} 
-    //                   name={item.icon}
-    //                   color={'#00437a'}/>
-    //           }/>
-    //       </TouchableOpacity>
-    //     </View>
-    //     ))}

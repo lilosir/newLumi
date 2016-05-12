@@ -16,7 +16,7 @@ var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material
 var GiftedMessenger = require('react-native-gifted-messenger');
 var Dimensions = require('Dimensions');
 
-window.navigator.userAgent = "react-native";
+// window.navigator.userAgent = "react-native";
 var apis = require('../apis');
 
 var { 
@@ -63,11 +63,11 @@ var Chats = React.createClass({
 
     //Must specifiy 'jsonp: false' since react native doesn't provide the dom
     //and thus wouldn't support creating an iframe/script tag
-    this.socket = io(apis.BASE_URL,{jsonp: false});
+    // this.socket = io(apis.BASE_URL,{jsonp: false});
     
     var username = global.SESSION.user.username;
 
-    this.socket.emit('init', username);
+    // this.socket.emit('init', username);
     // if(username !== null){
     //   var socketID = username.split("@lakeheadu.ca")[0]; 
     //   this.socket.emit('init', socketID);  
@@ -98,13 +98,13 @@ var Chats = React.createClass({
     // }
     
 
-    this.socket.on('chat message', (msg) =>{
+    // this.socket.on('chat message', (msg) =>{
       // this.state.messages.push(msg);
       // this.forceUpdate();
       // console.warn(msg);
       // this.handleReceive({text: msg, name: this.props.titleName, image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
-      this._GiftedMessenger.appendMessage({text: msg, name: this.props.titleName, image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
-    });
+    //   this._GiftedMessenger.appendMessage({text: msg, name: this.props.titleName, image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
+    // });
 
     this.setTimeout(()=>{
       this.setState({ loading: false,reload: false,})
@@ -222,42 +222,34 @@ var Chats = React.createClass({
     }
 
     return (
-      <DrawerLayoutAndroid
-        drawerWidth={150}
-        ref={'DRAWER'}
-        onDrawerOpen = {()=> {this.setState({opendrawer:true})}}
-        onDrawerClose = {()=> {this.setState({opendrawer:false})}}
-        drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => <MynavigationView></MynavigationView>}>
-        <View style={styles.container}>
-          <GiftedMessenger
-            ref={(c) => this._GiftedMessenger = c}
-        
-            styles={{
-              bubbleRight: {
-                marginLeft: 70,
-                backgroundColor: '#007aff',
-              },
-            }}
-            
-            autoFocus={true}
-            messages={this.getMessages()}
-            handleSend={this.handleSend}
-            // onErrorButtonPress={this.onErrorButtonPress}
-            maxHeight={Dimensions.get('window').height - navBarHeight - statusBarHeight}
-            loadEarlierMessagesButton={true}
-            onLoadEarlierMessages={this.onLoadEarlierMessages}
+      <View style={styles.container}>
+        <GiftedMessenger
+          ref={(c) => this._GiftedMessenger = c}
+      
+          styles={{
+            bubbleRight: {
+              marginLeft: 70,
+              backgroundColor: '#007aff',
+            },
+          }}
+          
+          autoFocus={true}
+          messages={this.getMessages()}
+          handleSend={this.handleSend}
+          // onErrorButtonPress={this.onErrorButtonPress}
+          maxHeight={Dimensions.get('window').height - navBarHeight - statusBarHeight}
+          loadEarlierMessagesButton={true}
+          onLoadEarlierMessages={this.onLoadEarlierMessages}
 
-            senderName='Developer'
-            senderImage={null}
-            autoScroll={false}
-            scrollAnimated={true}
-            // onImagePress={this.onImagePress}
-            displayNames={true}
-            
-            inverted={true}/>
-        </View>
-      </DrawerLayoutAndroid>
+          senderName='Developer'
+          senderImage={null}
+          autoScroll={false}
+          scrollAnimated={true}
+          // onImagePress={this.onImagePress}
+          displayNames={true}
+          
+          inverted={true}/>
+      </View>
     )
   },
 

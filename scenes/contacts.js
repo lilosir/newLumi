@@ -36,16 +36,28 @@ var Contacts = React.createClass({
 
   mixins: [nav],
 
+  // getInitialState: function() {
+  //   return {
+  //     : 
+  //   };
+  // },
+
+  openDrawer: function(){
+    this.props.openDrawer(true);
+  },
+
   componentDidMount: function(){
+    this.props.setLockMode("unlocked");
     this.setLeftButtons([{
       icon: 'menu',
-      // onPress: this.openDrawer,
+      onPress: this.openDrawer,
     }]);
 
     this.setRightButtons([{
       icon: 'inbox',
       onPress: Actions.pop
     }]);  
+
   },
 
   render: function() {

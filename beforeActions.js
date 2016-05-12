@@ -19,7 +19,6 @@ APIS.addBeforeActions(function (params) {
   
   if(!global.SESSION){
     session_token = "";    
-    console.log("cannot find global session");
     params.options.headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

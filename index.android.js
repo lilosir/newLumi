@@ -7,10 +7,10 @@ var React = require('react-native');
 var Login = require('./scenes/login');
 var CreateAccount = require('./scenes/createAccount');
 var Contacts = require('./scenes/contacts');
-// var Chats = require('./scenes/chats');
+var Chats = require('./scenes/chats');
+
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
-// var Recent = require('./scenes/recent');
 // var Profile = require('./scenes/profile');
 // var Me = require('./scenes/me');
 
@@ -54,40 +54,64 @@ var renderLeftButton = function(navigator, index, state) {
 
 var Lumi = React.createClass({
 
-  componentDidMount: function() {
-    this
+  getInitialState: function() {
+    return {
+       drawerLockMode : "locked-closed" 
+    };
   },
+
+  _setLockMode: function(val) {
+    this.setState({
+      drawerLockMode: val ||  "locked-closed"
+    });
+  },
+
+  _openDrawer: function(value){
+    if(value){
+      this.refs["DRAWER"].openDrawer();
+    }else{
+      this.refs["DRAWER"].closeDrawer();
+    }
+    
+  },
+  
   render: function() {
     return (
       <DrawerLayoutAndroid
+        drawerLockMode={this.state.drawerLockMode}
         drawerWidth={200}
         ref={'DRAWER'}
         drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={() => <MynavigationView></MynavigationView>}>
+        renderNavigationView={() => <MynavigationView openDrawer={this._openDrawer}></MynavigationView>}>
       
-      <Router hideNavBar={false} 
-          barButtonTextStyle={{
-            color: '#f4cb0d'
-          }}
+        <Router hideNavBar={false} 
+            barButtonTextStyle={{
+              color: '#f4cb0d'
+            }}
 
-          barButtonIconStyle={{
-            tintColor: '#f4cb0d'
-          }}
+            barButtonIconStyle={{
+              tintColor: '#f4cb0d'
+            }}
 
-          navigationBarStyle={{
-            backgroundColor: '#00437a'
-          }}
+            navigationBarStyle={{
+              backgroundColor: '#00437a'
+            }}
 
-          renderTitle={ renderTitle }
-          renderLeftButton={ renderLeftButton }
-          renderRightButton={ renderRightButton }
+            setLockMode={this._setLockMode}
 
-          titleStyle = {{color:'#f4cb0d',}}>
-        <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-        <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
-        <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
-        <Route name="contacts" component={Contacts}  title="Contacts"/>
-      </Router>
+            openDrawer={this._openDrawer}
+
+            renderTitle={ renderTitle }
+            renderLeftButton={ renderLeftButton }
+            renderRightButton={ renderRightButton }
+
+            titleStyle = {{color:'#f4cb0d',}}>
+          <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
+          <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
+          <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
+          <Route name="contacts" component={Contacts}  title="Contacts"/>
+          <Route name="chats" component={Chats}  title="Chats"/>
+        </Router>
       </DrawerLayoutAndroid>
       
     );
