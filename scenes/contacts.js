@@ -15,6 +15,9 @@ var CustomTabbar = require('./customTabbar').default;
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 var Icon = require('react-native-vector-icons/FontAwesome');
 
+var GcmAPIS = require('../operations/gcm');
+var GcmAndroid = require('react-native-gcm-android');
+
 var { 
   AppRegistry, 
   StyleSheet, 
@@ -58,6 +61,20 @@ var Contacts = React.createClass({
       onPress: Actions.pop
     }]);  
 
+    GcmAndroid.addEventListener('register', function(token){
+            // console.warn('send gcm token', token);
+            try{
+                GcmAPIS.register({
+                  body:{
+                    token: token,
+                    userid: global.SESSION.user._id
+                  }
+                });
+            }catch(e){
+              console.warn(e)
+            }            
+        });        
+    GcmAndroid.requestPermissions();
   },
 
   render: function() {

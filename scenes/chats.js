@@ -16,7 +16,6 @@ var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material
 var GiftedMessenger = require('react-native-gifted-messenger');
 var Dimensions = require('Dimensions');
 
-// window.navigator.userAgent = "react-native";
 var apis = require('../apis');
 
 var { 
@@ -41,7 +40,13 @@ var Chats = React.createClass({
   mixins: [TimerMixin,nav],
 
   getInitialState: function(){
-    return {friends: [], earlierMessages:[], loading:true, reload: false, opendrawer:false};
+
+    return {
+      messages: this._messages,
+      isLoadingEarlierMessages: false,
+      typingMessage: '',
+      allLoaded: false,
+    };
   },
 
   componentDidMount: async function(){
@@ -61,142 +66,165 @@ var Chats = React.createClass({
       this.setTitleView("Chats");
     }
 
-    //Must specifiy 'jsonp: false' since react native doesn't provide the dom
-    //and thus wouldn't support creating an iframe/script tag
-    // this.socket = io(apis.BASE_URL,{jsonp: false});
-    
-    var username = global.SESSION.user.username;
+    this._isMounted = false;
+    this._messages = this.getInitialMessages();
 
-    // this.socket.emit('init', username);
-    // if(username !== null){
-    //   var socketID = username.split("@lakeheadu.ca")[0]; 
-    //   this.socket.emit('init', socketID);  
-    // }else{
-    //   console.warn("no username");
-    //   Actions.login();
-    // }
-        
+    this._isMounted = true;
 
-    // try{
+    setTimeout(() => {
+      this.setState({
+        typingMessage: 'React-Bot is typing a message...',
+      });
+    }, 1000); // simulating network
 
-    //   var username = await AsyncStorage.getItem("username");
-    //   this.username = username;
-    //   // console.warn(username);
-    //   // let username = await AsyncStorage.getItem("username");
-    //   if(username !== null){
-    //     this.from = this.username.split("@lakeheadu.ca")[0]; 
-    //     this.socket.emit('init', this.from);       
-    //     // console.warn("local username:",from);
-    //   }else{
-    //     console.warn("no username");
-    //     Actions.login();
-    //   }  
-    // }
-    // catch(e){
-    //   console.warn("Get local username error:",e);
-    //   Actions.login();
-    // }
-    
+    setTimeout(() => {
+      this.setState({
+        typingMessage: '',
+      });
+    }, 3000); // simulating network
 
-    // this.socket.on('chat message', (msg) =>{
-      // this.state.messages.push(msg);
-      // this.forceUpdate();
-      // console.warn(msg);
-      // this.handleReceive({text: msg, name: this.props.titleName, image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
-    //   this._GiftedMessenger.appendMessage({text: msg, name: this.props.titleName, image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, position: 'left', date: new Date()});
-    // });
 
-    this.setTimeout(()=>{
-      this.setState({ loading: false,reload: false,})
-    }, 500);   
-   
+    setTimeout(() => {
+      this.handleReceive({
+        text: 'Hello Awesome Developer',
+        name: 'React-Bot',
+        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+        position: 'left',
+        date: new Date(),
+        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+      });
+    }, 3300); // simulating network   
   },
 
-  getMessages() {
+  componentWillUnmount() {
+    this._isMounted = false;
+  },
+
+  getInitialMessages() {
     return [
-      { text: 'Are you building a chat app?', 
-        name: 'React-Native', 
-        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'}, 
-        position: 'left', 
-        date: new Date(2015, 10, 16, 19, 0)},
       {
-        text: "Yes, and I use Gifted Messenger!", 
-        name: 'Developer', 
-        image: null, 
-        position: 'right', 
-        date: new Date(2015, 11, 17, 19, 0)
-        // If needed, you can add others data (eg: userId, messageId)
+        text: 'Are you building a chat app?',
+        name: 'React-Bot',
+        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+        position: 'left',
+        date: new Date(2016, 3, 14, 13, 0),
+        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+      },
+      {
+        text: "Yes, and I use Gifted Messenger!",
+        name: 'Awesome Developer',
+        image: null,
+        position: 'right',
+        date: new Date(2016, 3, 14, 13, 1),
+        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
       },
     ];
   },
 
-  fetchEarlierMessages: async function(){
-    
-    try{
-      var messages = await MessagesAPIS.getEarlierMessages({query:{from:'rsheng',to:this.props.titleName}});
-      
-      // retur 
-      // messages = JSON.stringify(messages);
-      // console.warn(messages);
-      return messages;
-    }catch(e){
-      console.warn("fetch messages wrong")
-      this.setState({reload: true});
+  setMessageStatus(uniqueId, status) {
+    let messages = [];
+    let found = false;
+
+    for (let i = 0; i < this._messages.length; i++) {
+      if (this._messages[i].uniqueId === uniqueId) {
+        let clone = Object.assign({}, this._messages[i]);
+        clone.status = status;
+        messages.push(clone);
+        found = true;
+      } else {
+        messages.push(this._messages[i]);
+      }
+    }
+
+    if (found === true) {
+      this.setMessages(messages);
     }
   },
 
-  onLoadEarlierMessages: async function(oldestMessage = {}, callback = () => {}) {    
-    
-    //get the earlier messages from server    
-    var messages = await this.fetchEarlierMessages();
- 
-    // newest messages have to be at the begining of the array
-    // console.warn('global',global.SESSION);
-    // console.warn(apis.BASE_URL+"/"+item.from.avater);
-    var earlierMessages = messages.map(function(item){
-      var server_from = item.from.username.split("@lakeheadu.ca")[0];
+  setMessages(messages) {
+    this._messages = messages;
 
-      //check this message from whom
-        return {
-          text: item.message,
-          name: server_from,
-          image: {uri: apis.BASE_URL+"/"+item.from.avatar},
-          position: server_from === global.SESSION.user.username.split("@lakeheadu.ca")[0] ? 'right' : 'left',
-          date: item.created_at,
-        }
-    })
-
-    setTimeout(() => {
-      callback(earlierMessages, false); // when second parameter is true, the "Load earlier messages" button will be hidden      
-    }, 1000);
+    // append the message
+    this.setState({
+      messages: messages,
+    });
   },
-  
-  async handleSend(message = {}, rowID = null) {
+
+  handleSend(message = {}) {
+
     // Your logic here
     // Send message.text to your server
-    
-    var myObject = this._GiftedMessenger.getMessage(rowID);
 
-    this.socket.emit('chat message', {text:myObject.text, from: this.from, to:this.props.titleName});
+    message.uniqueId = Math.round(Math.random() * 10000); // simulating server-side unique id generation
+    this.setMessages(this._messages.concat(message));
 
-    // console.warn(JSON.stringify(this._GiftedMessenger.getMessage(rowID)));
-    // var myObject = this._GiftedMessenger.getMessage(rowID);
-    // for(var propertyName in myObject) {
-    //   console.warn(propertyName);
-    // }
-    this._GiftedMessenger.setMessageStatus('Sent', rowID);
-    // this._GiftedMessenger.setMessageStatus('Seen', rowID);
-    // this._GiftedMessenger.setMessageStatus('Custom label status', rowID);
-    // this._GiftedMessenger.setMessageStatus('ErrorButton', rowID); // => In this case, you need also to set onErrorButtonPress
-    
+    // mark the sent message as Seen
+    setTimeout(() => {
+      this.setMessageStatus(message.uniqueId, 'Seen'); // here you can replace 'Seen' by any string you want
+    }, 1000);
+
+    // if you couldn't send the message to your server :
+    // this.setMessageStatus(message.uniqueId, 'ErrorButton');
   },
 
-  openDrawer:function() {   
-    this.state.opendrawer ? this.refs['DRAWER'].closeDrawer() : this.refs['DRAWER'].openDrawer();
+  onLoadEarlierMessages() {
+
+    // display a loader until you retrieve the messages from your server
+    this.setState({
+      isLoadingEarlierMessages: true,
+    });
+
+    // Your logic here
+    // Eg: Retrieve old messages from your server
+
+    // IMPORTANT
+    // Oldest messages have to be at the begining of the array
+    var earlierMessages = [
+      {
+        text: 'React Native enables you to build world-class application experiences on native platforms using a consistent developer experience based on JavaScript and React. https://github.com/facebook/react-native',
+        name: 'React-Bot',
+        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+        position: 'left',
+        date: new Date(2016, 0, 1, 20, 0),
+        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+      }, {
+        text: 'This is a touchable phone number 0606060606 parsed by taskrabbit/react-native-parsed-text',
+        name: 'Awesome Developer',
+        image: null,
+        position: 'right',
+        date: new Date(2016, 0, 2, 12, 0),
+        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+      },
+    ];
+
+    setTimeout(() => {
+      this.setMessages(earlierMessages.concat(this._messages)); // prepend the earlier messages to your list
+      this.setState({
+        isLoadingEarlierMessages: false, // hide the loader
+        allLoaded: true, // hide the `Load earlier messages` button
+      });
+    }, 1000); // simulating network
+
   },
 
   handleReceive(message = {}) {
-    this._GiftedMessenger.appendMessage(message);
+    // make sure that your message contains :
+    // text, name, image, position: 'left', date, uniqueId
+    this.setMessages(this._messages.concat(message));
+  },
+
+  onErrorButtonPress(message = {}) {
+    // Your logic here
+    // re-send the failed message
+
+    // remove the status
+    this.setMessageStatus(message.uniqueId, '');
+  },
+
+  // will be triggered when the Image of a row is touched
+  onImagePress(message = {}) {
+    // Your logic here
+    // Eg: Navigate to the user profile
   },
 
   goRecent: function(){
@@ -234,21 +262,21 @@ var Chats = React.createClass({
           }}
           
           autoFocus={true}
-          messages={this.getMessages()}
+          messages={this.state.messages}
           handleSend={this.handleSend}
           // onErrorButtonPress={this.onErrorButtonPress}
           maxHeight={Dimensions.get('window').height - navBarHeight - statusBarHeight}
-          loadEarlierMessagesButton={true}
+          loadEarlierMessagesButton={!this.state.allLoaded}
           onLoadEarlierMessages={this.onLoadEarlierMessages}
 
           senderName='Developer'
           senderImage={null}
-          autoScroll={false}
-          scrollAnimated={true}
-          // onImagePress={this.onImagePress}
+          onImagePress={this.onImagePress}
           displayNames={true}
           
-          inverted={true}/>
+          isLoadingEarlierMessages={this.state.isLoadingEarlierMessages}
+
+          typingMessage={this.state.typingMessage}/>
       </View>
     )
   },
@@ -258,7 +286,7 @@ var Chats = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 60,
+    marginTop: 57,
   },
   listView: {
     paddingTop: 20,

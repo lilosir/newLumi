@@ -102,6 +102,7 @@ var Login = React.createClass({
           });
         global.SESSION = await session;
         console.log("after login:",global.SESSION);
+        
         Actions.contacts({initialPage: 0});
       }catch(e){
         console.warn("login action error:", e.message);
