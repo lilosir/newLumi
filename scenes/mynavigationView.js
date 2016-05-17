@@ -2,7 +2,9 @@ var React = require('react-native');
 var {Actions} = require('react-native-router-flux');
 var TimerMixin = require('react-timer-mixin');
 var nav = require('../NavbarMixin');
-var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
+var apis = require('../apis');
+var {Avatar, List, Subheader, Card, Icon, TYPO, COLOR} = require('react-native-material-design');
+var UserAPIS = require('../operations/users');
 
 var {  
   StyleSheet, 
@@ -11,6 +13,7 @@ var {
   Text, 
   ScrollView,
   TouchableOpacity,
+  Image,
 } = React;
 
 const routers = [
@@ -64,14 +67,48 @@ const routers = [
 var mynavigationView = React.createClass({
   mixins: [TimerMixin,nav],
 
-  goContacts: function(){
-    // Actions.contacts();
+  getInitialState: function() {
+    return {
+      avatar:null, 
+      name:null,
+    };
+  },
+
+  componentDidUpdate:async function(){
+
+    console.warn(this.props.Info);
+    if(this.props.Info){
+      try{
+        this.myself = await UserAPIS.myself(this.props.Info);
+        
+        // if(user){
+        //   // this.setState({
+        //   //   avatar: apis.BASE_URL+"/"+user.avatar,
+        //   //   name:user.username.split("@lakeheadu.ca")[0],
+        //   // })
+        // }
+      }catch(e){
+        console.log(e);
+      }
+    }
+  },
+
+  componentWillMount: async function() {
+    
   },
 
   render: function() {
     return (
-      <View>
-        <ScrollView style={styles.container}>
+      <View style={styles.container}>
+        <View style={{backgroundColor: "#eeeeee", height: 100, alignItems : 'center', flexDirection: 'row'}}>
+          <View style={{marginLeft: 15}}>
+            <Avatar image={<Image source={ {uri:this.state.avatar}}/>} />
+          </View>
+          <View style={{marginLeft: 15}}>
+            <Text>{this.state.name}</Text>
+          </View>
+        </View>
+        <ScrollView>
             {routers.map((item,i)=>(
 
             <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>

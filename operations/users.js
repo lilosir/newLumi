@@ -7,6 +7,12 @@ var Users = {
     }, params));
   },
 
+  myself: function(id, params){
+    return apis.asyncFetch(apis.BASE_URL + '/users/myself/'+ id, Object.assign({
+      method: 'GET'
+    }, params));
+  },
+
   create: function(params) {
     return apis.asyncFetch(apis.BASE_URL + '/users', Object.assign({
       method: 'POST'

@@ -40,20 +40,22 @@ var Recent = React.createClass({
 	fetchRecent: async function(){
 		try{
 			var friends_recent = await UserAPIS.getRecent(global.SESSION.user._id);
-			friends_recent.reverse();
-			friends_recent = friends_recent.map(function(item){
-				return {
-					username: item.username,
-					id: item._id,
-					avatar: apis.BASE_URL+"/"+item.avatar,
-				}
-			})
-			
-			this.setState({
-				recent: friends_recent,
-				loading: false,
-				reload: false,
-			});
+			if(friends_recent){
+				friends_recent.reverse();
+				friends_recent = friends_recent.map(function(item){
+					return {
+						username: item.username,
+						id: item._id,
+						avatar: apis.BASE_URL+"/"+item.avatar,
+					}
+				})
+				
+				this.setState({
+					recent: friends_recent,
+					loading: false,
+					reload: false,
+				});
+			}			
 		}catch(e){
 			console.warn(e);			
 		}
@@ -86,6 +88,14 @@ var Recent = React.createClass({
 	    if(this.state.loading){
 	      return (
 	        <Loading/>
+	      )
+	    }
+
+	    if(this.state.recent.length < 1){
+	      return(
+	        <View style={{flex :1, justifyContent: 'center', alignItems: 'center',}}>
+	          <Text style={{fontSize: 20, textAlign: 'center', color:'black'}}>Let's talk to someone</Text>
+	        </View>
 	      )
 	    }
 

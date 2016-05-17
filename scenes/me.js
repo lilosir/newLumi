@@ -16,8 +16,8 @@ var Me = React.createClass({
 
 	componentDidMount: function(){
 	    this.setLeftButtons([{
-	      icon: 'menu',
-	      onPress: this.openDrawer,
+	      icon: 'navigate-before',
+	      onPress: Actions.pop,
 	    }]);
 
 	    this.setRightButtons([{
@@ -28,7 +28,9 @@ var Me = React.createClass({
 
 	render: function() {
 		return (
-			<Text>hi</Text>
+			<View style={{marginTop: 60}}>
+				<Text >hi</Text>
+			</View>
 		);
 	}
 

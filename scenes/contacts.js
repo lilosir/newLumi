@@ -51,6 +51,7 @@ var Contacts = React.createClass({
 
   componentDidMount: function(){
     this.props.setLockMode("unlocked");
+    this.props.getInfo(global.SESSION.user._id);
     this.setLeftButtons([{
       icon: 'menu',
       onPress: this.openDrawer,

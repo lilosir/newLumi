@@ -8,6 +8,7 @@ var Login = require('./scenes/login');
 var CreateAccount = require('./scenes/createAccount');
 var Contacts = require('./scenes/contacts');
 var Chats = require('./scenes/chats');
+var Me = require('./scenes/me');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -103,7 +104,8 @@ if (GcmAndroid.launchNotification) {
 
     getInitialState: function() {
       return {
-         drawerLockMode : "locked-closed" 
+         drawerLockMode : "locked-closed",
+         info: null,
       };
     },
 
@@ -121,15 +123,25 @@ if (GcmAndroid.launchNotification) {
       }
       
     },
+
+    _getInfo: function(data){
+      // console.warn(data);
+      this.setState({info: data})
+    },
+
+    _onDrawerOpen: function(){
+      // console.warn('sfsdf');
+    },
     
     render: function() {
       return (
         <DrawerLayoutAndroid
           drawerLockMode={this.state.drawerLockMode}
-          drawerWidth={200}
+          drawerWidth={250}
           ref={'DRAWER'}
+          onDrawerOpen={this._onDrawerOpen}
           drawerPosition={DrawerLayoutAndroid.positions.Left}
-          renderNavigationView={() => <MynavigationView openDrawer={this._openDrawer}></MynavigationView>}>
+          renderNavigationView={() => <MynavigationView openDrawer={this._openDrawer} Info={this.state.info}></MynavigationView>}>
         
           <Router hideNavBar={false} 
               barButtonTextStyle={{
@@ -148,16 +160,19 @@ if (GcmAndroid.launchNotification) {
 
               openDrawer={this._openDrawer}
 
+              getInfo = {this._getInfo}
+
               renderTitle={ renderTitle }
               renderLeftButton={ renderLeftButton }
               renderRightButton={ renderRightButton }
 
               titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-            <Route name="login" component={Login} title="login" schema="modal"/>
+            <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
             <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
-            <Route name="chats" component={Chats}  initial={true} title="Chats"/>
+            <Route name="chats" component={Chats}  title="Chats"/>
+            <Route name="me" component={Me}  title="Me"/>
           </Router>
         </DrawerLayoutAndroid>
         
