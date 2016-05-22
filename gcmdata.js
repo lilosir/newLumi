@@ -2,6 +2,10 @@
 module.exports = {
 	// messages
 	messages: [],
+
+	// list of functions
+	subscribers: [],
+	
 	// add message
 	addMessage: function(msg) {
 		this.messages.push(msg);
@@ -16,6 +20,4 @@ module.exports = {
 	subscribe: function(s) {
 		this.subscribers.push(s);
 	},
-	// list of functions
-	subscribers: []
 }

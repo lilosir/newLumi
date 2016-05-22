@@ -73,46 +73,24 @@ var Chats = React.createClass({
     }
 
     try{
-      var mes = await AsyncStorage.getItem("chatTo");
+      var mes = await AsyncStorage.getItem("chatTo"+this.props.id);
 
       if(mes){
         initMes = JSON.parse(mes);
         this.setMessages(initMes);
       }else{
-        AsyncStorage.setItem("chatTo", JSON.stringify(initMes));
+        AsyncStorage.setItem("chatTo"+this.props.id, JSON.stringify(initMes));
+        this.setMessages(initMes);
       }
+
+      AsyncStorage.removeItem("chatTo"+this.props.id);
     }catch(e){
       console.warn("err", e);
     }
 
     // this._isMounted = false;
-    // this._messages = this.getInitialMessages();
-    // this.setMessages(this._messages);
     // this._isMounted = true;
-
-    // setTimeout(() => {
-    //   this.setState({
-    //     typingMessage: 'React-Bot is typing a message...',
-    //   });
-    // }, 1000); // simulating network
-
-    // setTimeout(() => {
-    //   this.setState({
-    //     typingMessage: '',
-    //   });
-    // }, 3000); // simulating network
-
-
-    // setTimeout(() => {
-    //   this.handleReceive({
-    //     text: 'Hello Awesome Developer',
-    //     name: 'React-Bot',
-    //     image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-    //     position: 'left',
-    //     date: new Date(),
-    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-    //   });
-    // }, 3300); // simulating network  
+ 
     GCM.subscribe(this._onMessage);
 
     this.getDestinationUser();
@@ -154,82 +132,12 @@ var Chats = React.createClass({
     // console.warn(msg.key1);
     // var mes = msg.key1;
     var mes= JSON.parse(msg.key1);
-  
-    // this.handleReceive({
-    //   text: mes.text,
-    //   // name: mes.name,
-    //   image: {uri: mes.image},
-    //   position: mes.position,
-    //   date: mes.date,
-    //   uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-    // })
-    // console.warn(msg.key2);
-    // console.warn(global.SESSION.user._id);
+    // console.warn("!!!!!!!!!!!!!!",mes)
     if(msg.key2 === global.SESSION.user._id){
-
+      mes.position = 'left';
       this.handleReceive(mes);
+      this.storeLocal(mes);
     }
-  },
-
-  getLocalMessages: async function(){
-    try{
-      var mes = await AsyncStorage.getItem("chatTo");
-
-      if(mes){
-        console.warn("11", JSON.parse(mes));
-        console.warn("22", mes);
-        initMes = JSON.parse(mes);
-      }else{
-        AsyncStorage.setItem("chatTo", JSON.stringify(initMes));
-      }
-    }catch(e){
-      console.warn("err", e);
-    }
-  },
-
-  getInitialMessages: function() {
-
-    var originmes = [];
-    AsyncStorage.getItem("chatTo", (err, result)=>{
-      if(err){
-        console.warn(err);
-      }else{
-        if(!result){
-          console.warn("no storage");
-          AsyncStorage.setItem("chatTo", JSON.stringify(initMes), (err)=>{
-            if(err)
-            console.warn("!!!!!!!!!!!!",err);
-          });
-          // originmes = [];
-          return [];
-        }else{
-          // console.warn("111111111111", JSON.parse(result));
-          // originmes = result;
-          // console.warn("222222222222", originmes);
-          return JSON.parse(result);
-        }        
-      }
-    });
-    // return [
-    //   {
-    //     text: 'Are you building a chat app?',
-    //     name: 'React-Bot',
-    //     image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-    //     position: 'left',
-    //     date: new Date(2016, 3, 14, 13, 0),
-    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-    //   },
-    //   {
-    //     text: "Yes, and I use Gifted Messenger!",
-    //     name: 'Awesome Developer',
-    //     image: null,
-    //     position: 'right',
-    //     date: new Date(2016, 3, 14, 13, 1),
-    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-    //   },
-    // ];
-    console.warn("here",this.originmes);
-    return originmes;
   },
 
   setMessageStatus(uniqueId, status) {
@@ -263,10 +171,13 @@ var Chats = React.createClass({
 
   handleSend(message = {}) {
 
+    message.uniqueId = Math.round(Math.random() * 10000000); // simulating server-side unique id generation
+    this.setMessages(this._messages.concat(message));
+
+    this.storeLocal(message);
+
     // Your logic here
     // Send message.text to your server
-    // console.warn(this.props.id);
-    // console.warn('message',message);
     MessagesAPIS.sendMessages(global.SESSION.user._id, {
       body:{
         to: this.props.id,
@@ -274,19 +185,12 @@ var Chats = React.createClass({
           text: message.text,
           name: this.state.myName,
           image: {uri: this.state.myAvatar},
-          position: 'left',
+          position: 'right',
           date: message.date,
-          uniqueId: Math.round(Math.random() * 10000),
+          uniqueId: message.uniqueId,
         },
       }
-    })
-
-    message.uniqueId = Math.round(Math.random() * 10000); // simulating server-side unique id generation
-    this.setMessages(this._messages.concat(message));
-
-    // console.warn(typeof message)
-    // console.warn(typeof this._messages)
-    this.storeLocal(message);
+    });    
 
     // mark the sent message as Seen
     // setTimeout(() => {
@@ -304,7 +208,7 @@ var Chats = React.createClass({
     }else{
       initMes.push(mes);
     }
-    AsyncStorage.setItem('chatTo', JSON.stringify(initMes));
+    AsyncStorage.setItem('chatTo'+this.props.id, JSON.stringify(initMes));
   },
 
   onLoadEarlierMessages() {
