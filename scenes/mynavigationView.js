@@ -30,7 +30,7 @@ const routers = [
     icon: 'fiber-new',
     action: function(){
       this.props.openDrawer(false);
-      ctions.contacts({initialPage: 0})
+      Actions.contacts({initialPage: 0})
     },
   },
   {
@@ -74,22 +74,15 @@ var mynavigationView = React.createClass({
     };
   },
 
-  componentDidUpdate:async function(){
-
-    console.warn(this.props.Info);
+  componentWillReceiveProps: function(){
+    
     if(this.props.Info){
-      try{
-        this.myself = await UserAPIS.myself(this.props.Info);
-        
-        // if(user){
-        //   // this.setState({
-        //   //   avatar: apis.BASE_URL+"/"+user.avatar,
-        //   //   name:user.username.split("@lakeheadu.ca")[0],
-        //   // })
-        // }
-      }catch(e){
-        console.log(e);
-      }
+      var avatar = this.props.Info.avatar;
+      var name = this.props.Info.name;
+      this.setState({
+        avatar: avatar,
+        name: name,
+      })      
     }
   },
 
@@ -102,10 +95,10 @@ var mynavigationView = React.createClass({
       <View style={styles.container}>
         <View style={{backgroundColor: "#eeeeee", height: 100, alignItems : 'center', flexDirection: 'row'}}>
           <View style={{marginLeft: 15}}>
-            <Avatar image={<Image source={ {uri:this.state.avatar}}/>} />
+            <Avatar size={60} image={<Image source={ {uri:this.state.avatar}}/>} />
           </View>
           <View style={{marginLeft: 15}}>
-            <Text>{this.state.name}</Text>
+            <Text style={{color:'black'}}>{this.state.name}</Text>
           </View>
         </View>
         <ScrollView>

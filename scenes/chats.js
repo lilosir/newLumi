@@ -17,6 +17,7 @@ var GiftedMessenger = require('react-native-gifted-messenger');
 var Dimensions = require('Dimensions');
 
 var apis = require('../apis');
+var GCM = require('../gcmdata');
 
 var { 
   AppRegistry, 
@@ -35,6 +36,8 @@ var {
   Platform,
 } = React;
 
+var initMes = [];
+
 var Chats = React.createClass({
 
   mixins: [TimerMixin,nav],
@@ -46,6 +49,9 @@ var Chats = React.createClass({
       isLoadingEarlierMessages: false,
       typingMessage: '',
       allLoaded: false,
+      myAvatar: null,
+      myName: null,
+      desAvatar: null,
     };
   },
 
@@ -66,59 +72,164 @@ var Chats = React.createClass({
       this.setTitleView("Chats");
     }
 
-    this._isMounted = false;
-    this._messages = this.getInitialMessages();
+    try{
+      var mes = await AsyncStorage.getItem("chatTo");
 
-    this._isMounted = true;
+      if(mes){
+        initMes = JSON.parse(mes);
+        this.setMessages(initMes);
+      }else{
+        AsyncStorage.setItem("chatTo", JSON.stringify(initMes));
+      }
+    }catch(e){
+      console.warn("err", e);
+    }
 
-    setTimeout(() => {
-      this.setState({
-        typingMessage: 'React-Bot is typing a message...',
-      });
-    }, 1000); // simulating network
+    // this._isMounted = false;
+    // this._messages = this.getInitialMessages();
+    // this.setMessages(this._messages);
+    // this._isMounted = true;
 
-    setTimeout(() => {
-      this.setState({
-        typingMessage: '',
-      });
-    }, 3000); // simulating network
+    // setTimeout(() => {
+    //   this.setState({
+    //     typingMessage: 'React-Bot is typing a message...',
+    //   });
+    // }, 1000); // simulating network
+
+    // setTimeout(() => {
+    //   this.setState({
+    //     typingMessage: '',
+    //   });
+    // }, 3000); // simulating network
 
 
-    setTimeout(() => {
-      this.handleReceive({
-        text: 'Hello Awesome Developer',
-        name: 'React-Bot',
-        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-        position: 'left',
-        date: new Date(),
-        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-      });
-    }, 3300); // simulating network   
+    // setTimeout(() => {
+    //   this.handleReceive({
+    //     text: 'Hello Awesome Developer',
+    //     name: 'React-Bot',
+    //     image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+    //     position: 'left',
+    //     date: new Date(),
+    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+    //   });
+    // }, 3300); // simulating network  
+    GCM.subscribe(this._onMessage);
+
+    this.getDestinationUser();
+    this.getmyself();
+    
   },
 
-  componentWillUnmount() {
-    this._isMounted = false;
+  getmyself: async function(){
+      try{
+        var user = await UserAPIS.myself(global.SESSION.user._id);
+        
+        if(user){        
+          let avatar = apis.BASE_URL+"/"+user.avatar;
+          let username = user.username.split("@lakeheadu.ca")[0];
+          this.setState({myAvatar: avatar, myName:username});
+        }      
+      }catch(e){
+        console.log(e);
+      }
+   },
+
+  getDestinationUser: async function(){
+
+    try{
+      var user = await UserAPIS.queryOne({
+        query:{
+          id: this.props.id,
+        }});
+      if(user){
+        // console.warn('1',user.avatar)
+        this.setState({desAvatar: user.avatar});
+      }
+    }catch(e){
+      console.log(e);
+    }
   },
 
-  getInitialMessages() {
-    return [
-      {
-        text: 'Are you building a chat app?',
-        name: 'React-Bot',
-        image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
-        position: 'left',
-        date: new Date(2016, 3, 14, 13, 0),
-        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-      },
-      {
-        text: "Yes, and I use Gifted Messenger!",
-        name: 'Awesome Developer',
-        image: null,
-        position: 'right',
-        date: new Date(2016, 3, 14, 13, 1),
-        uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
-      },
-    ];
+  _onMessage: function(msg) {
+    // console.warn(msg.key1);
+    // var mes = msg.key1;
+    var mes= JSON.parse(msg.key1);
+  
+    // this.handleReceive({
+    //   text: mes.text,
+    //   // name: mes.name,
+    //   image: {uri: mes.image},
+    //   position: mes.position,
+    //   date: mes.date,
+    //   uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+    // })
+    // console.warn(msg.key2);
+    // console.warn(global.SESSION.user._id);
+    if(msg.key2 === global.SESSION.user._id){
+
+      this.handleReceive(mes);
+    }
+  },
+
+  getLocalMessages: async function(){
+    try{
+      var mes = await AsyncStorage.getItem("chatTo");
+
+      if(mes){
+        console.warn("11", JSON.parse(mes));
+        console.warn("22", mes);
+        initMes = JSON.parse(mes);
+      }else{
+        AsyncStorage.setItem("chatTo", JSON.stringify(initMes));
+      }
+    }catch(e){
+      console.warn("err", e);
+    }
+  },
+
+  getInitialMessages: function() {
+
+    var originmes = [];
+    AsyncStorage.getItem("chatTo", (err, result)=>{
+      if(err){
+        console.warn(err);
+      }else{
+        if(!result){
+          console.warn("no storage");
+          AsyncStorage.setItem("chatTo", JSON.stringify(initMes), (err)=>{
+            if(err)
+            console.warn("!!!!!!!!!!!!",err);
+          });
+          // originmes = [];
+          return [];
+        }else{
+          // console.warn("111111111111", JSON.parse(result));
+          // originmes = result;
+          // console.warn("222222222222", originmes);
+          return JSON.parse(result);
+        }        
+      }
+    });
+    // return [
+    //   {
+    //     text: 'Are you building a chat app?',
+    //     name: 'React-Bot',
+    //     image: {uri: 'https://facebook.github.io/react/img/logo_og.png'},
+    //     position: 'left',
+    //     date: new Date(2016, 3, 14, 13, 0),
+    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+    //   },
+    //   {
+    //     text: "Yes, and I use Gifted Messenger!",
+    //     name: 'Awesome Developer',
+    //     image: null,
+    //     position: 'right',
+    //     date: new Date(2016, 3, 14, 13, 1),
+    //     uniqueId: Math.round(Math.random() * 10000), // simulating server-side unique id generation
+    //   },
+    // ];
+    console.warn("here",this.originmes);
+    return originmes;
   },
 
   setMessageStatus(uniqueId, status) {
@@ -154,17 +265,46 @@ var Chats = React.createClass({
 
     // Your logic here
     // Send message.text to your server
+    // console.warn(this.props.id);
+    // console.warn('message',message);
+    MessagesAPIS.sendMessages(global.SESSION.user._id, {
+      body:{
+        to: this.props.id,
+        text: {
+          text: message.text,
+          name: this.state.myName,
+          image: {uri: this.state.myAvatar},
+          position: 'left',
+          date: message.date,
+          uniqueId: Math.round(Math.random() * 10000),
+        },
+      }
+    })
 
     message.uniqueId = Math.round(Math.random() * 10000); // simulating server-side unique id generation
     this.setMessages(this._messages.concat(message));
 
+    // console.warn(typeof message)
+    // console.warn(typeof this._messages)
+    this.storeLocal(message);
+
     // mark the sent message as Seen
-    setTimeout(() => {
-      this.setMessageStatus(message.uniqueId, 'Seen'); // here you can replace 'Seen' by any string you want
-    }, 1000);
+    // setTimeout(() => {
+    //   this.setMessageStatus(message.uniqueId, 'Seen'); // here you can replace 'Seen' by any string you want
+    // }, 1000);
 
     // if you couldn't send the message to your server :
     // this.setMessageStatus(message.uniqueId, 'ErrorButton');
+  },
+
+  storeLocal: function(mes){
+    if(initMes.length > 9){
+      initMes.push(mes);
+      initMes.splice(0, 1);
+    }else{
+      initMes.push(mes);
+    }
+    AsyncStorage.setItem('chatTo', JSON.stringify(initMes));
   },
 
   onLoadEarlierMessages() {
@@ -228,6 +368,7 @@ var Chats = React.createClass({
   },
 
   goRecent: function(){
+
     UserAPIS.updateRecent(global.SESSION.user._id,{
       body:{
         friendID: this.props.id,

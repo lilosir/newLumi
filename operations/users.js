@@ -48,6 +48,12 @@ var Users = {
       method: 'GET'
     }, params));
   },
+
+  queryOne: function(params){
+    return apis.asyncFetch(apis.BASE_URL + '/users/getOne', Object.assign({
+      method: 'GET'
+    }, params));
+  }
 }
 
 module.exports = Users;

@@ -9,6 +9,7 @@ var {Actions} = require('react-native-router-flux');
 var UserAPIS = require('../operations/users');
 var t = require('tcomb-form-native');
 var nav = require('../NavbarMixin');
+var apis = require('../apis');
 
 var {
   AppRegistry,
@@ -103,6 +104,14 @@ var Login = React.createClass({
         global.SESSION = await session;
         console.log("after login:",global.SESSION);
         
+        var user = await UserAPIS.myself(global.SESSION.user._id);
+      
+        if(user){        
+          let avatar = apis.BASE_URL+"/"+user.avatar;
+          let name = user.username.split("@lakeheadu.ca")[0];
+          this.props.getInfo({avatar: avatar, name:name});
+        }      
+
         Actions.contacts({initialPage: 0});
       }catch(e){
         console.warn("login action error:", e.message);

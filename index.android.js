@@ -25,6 +25,8 @@ var MynavigationView = require('./scenes/mynavigationView');
 require('./beforeActions');
 require('./afterActions');
 
+var GCM = require('./gcmdata');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -72,8 +74,10 @@ if (GcmAndroid.launchNotification) {
 
   var Lumi = React.createClass({
 
-    saveGcmToken: function(){
-      console.log("dfsdf")
+    getInitialState: function() {
+      return {
+         drawerLockMode : "locked-closed",
+      };
     },
 
     componentDidMount: function() {
@@ -84,29 +88,25 @@ if (GcmAndroid.launchNotification) {
       // GcmAndroid.addEventListener('registerError', function(error){
       //   console.log('registerError', error.message);
       // });
-      // GcmAndroid.addEventListener('notification', function(notification){
-      //   console.log('receive gcm notification', notification);
-      //   var info = JSON.parse(notification.data.info);
-      //   if (!GcmAndroid.isInForeground) {
-      //     Notification.create({
-      //       subject: info.subject,
-      //       message: info.message,
-      //     });
-      //   }
-      // });
+      GcmAndroid.addEventListener('notification', function(notification){
+        console.log('receive gcm notification', notification);
+
+        GCM.addMessage(notification.data);
+        
+        // var info = JSON.parse(notification.data.info);
+        // if (!GcmAndroid.isInForeground) {
+        //   Notification.create({
+        //     subject: info.subject,
+        //     message: info.message,
+        //   });
+        // }
+      });
 
       // DeviceEventEmitter.addListener('sysNotificationClick', function(e) {
       //   console.log('sysNotificationClick', e);
       // });
 
-      // GcmAndroid.requestPermissions();
-    },
-
-    getInitialState: function() {
-      return {
-         drawerLockMode : "locked-closed",
-         info: null,
-      };
+      GcmAndroid.requestPermissions();
     },
 
     _setLockMode: function(val) {
@@ -120,26 +120,19 @@ if (GcmAndroid.launchNotification) {
         this.refs["DRAWER"].openDrawer();
       }else{
         this.refs["DRAWER"].closeDrawer();
-      }
-      
+      }      
     },
 
     _getInfo: function(data){
-      // console.warn(data);
       this.setState({info: data})
-    },
-
-    _onDrawerOpen: function(){
-      // console.warn('sfsdf');
     },
     
     render: function() {
       return (
         <DrawerLayoutAndroid
           drawerLockMode={this.state.drawerLockMode}
-          drawerWidth={250}
+          drawerWidth={220}
           ref={'DRAWER'}
-          onDrawerOpen={this._onDrawerOpen}
           drawerPosition={DrawerLayoutAndroid.positions.Left}
           renderNavigationView={() => <MynavigationView openDrawer={this._openDrawer} Info={this.state.info}></MynavigationView>}>
         
@@ -171,7 +164,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
             <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
-            <Route name="chats" component={Chats}  title="Chats"/>
+            <Route name="chats" getGcm = {global.GCMdata} component={Chats}  title="Chats"/>
             <Route name="me" component={Me}  title="Me"/>
           </Router>
         </DrawerLayoutAndroid>
