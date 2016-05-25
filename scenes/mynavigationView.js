@@ -46,7 +46,7 @@ const routers = [
     icon: 'directions-bus',
     action: function(){
       this.props.openDrawer(false);
-      Actions.contacts({initialPage: 0})
+      Actions.bus()
     },
   },
   {

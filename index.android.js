@@ -9,6 +9,7 @@ var CreateAccount = require('./scenes/createAccount');
 var Contacts = require('./scenes/contacts');
 var Chats = require('./scenes/chats');
 var Me = require('./scenes/me');
+var Bus = require('./scenes/bus');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -161,11 +162,12 @@ if (GcmAndroid.launchNotification) {
 
               titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-            <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
+            <Route name="login" component={Login} title="login" schema="modal"/>
             <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
-            <Route name="chats" getGcm = {global.GCMdata} component={Chats}  title="Chats"/>
+            <Route name="chats" component={Chats}  title="Chats"/>
             <Route name="me" component={Me}  title="Me"/>
+            <Route name="bus" initial={true} component={Bus}  title="Bus"/>
           </Router>
         </DrawerLayoutAndroid>
         
