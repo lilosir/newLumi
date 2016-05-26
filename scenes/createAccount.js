@@ -97,7 +97,7 @@ var CreateAccount = React.createClass({
     return {};
   },
 
-  _onPressCreate: function(){
+  _onPressCreate: async function(){
 
     var value = this.refs.form.getValue();
     if (value) { // if validation fails, value will be null
@@ -110,21 +110,34 @@ var CreateAccount = React.createClass({
 
 
       //address need to end with @lakeheadu.ca
-      UserAPIS.create({
+      // UserAPIS.create({
+      //       body:{
+      //         username: username,
+      //         password: password,
+      //       }
+      //     }).then(function (responseData){
+      //       return responseData.json();            
+      //     })
+      //     .then(function (response){
+      //       ToastAndroid.show(response.message, ToastAndroid.LONG);
+      //       Actions.login();
+      //     })
+      //     .catch(function(e) {   
+      //       console.log("error",e);   
+      //     }).done();
+
+      try{
+        var account = await UserAPIS.create({
             body:{
               username: username,
               password: password,
-            }
-          }).then(function (responseData){
-            return responseData.json();            
-          })
-          .then(function (response){
-            ToastAndroid.show(response.message, ToastAndroid.LONG);
-            Actions.login();
-          })
-          .catch(function(e) {   
-            console.log("error",e);   
-          }).done();
+            }});
+        if(account){
+          ToastAndroid.show(account.message, ToastAndroid.LONG);
+        }
+      }catch(e){
+        console.warn(e)
+      }
     }
   },
 

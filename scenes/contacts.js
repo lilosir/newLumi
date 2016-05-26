@@ -48,8 +48,8 @@ var Contacts = React.createClass({
       
       if(user){        
         let avatar = apis.BASE_URL+"/"+user.avatar;
-        let name = user.username.split("@lakeheadu.ca")[0];
-        this.props.getInfo({avatar: avatar, name:name});
+        // let name = user.username.split("@lakeheadu.ca")[0];
+        this.props.getInfo({avatar: avatar, nickname:user.nickname});
       }      
     }catch(e){
       console.log(e);
@@ -59,8 +59,6 @@ var Contacts = React.createClass({
   componentDidMount: function(){
     this.props.setLockMode("unlocked");
 
-    // this.getmyself();
-    // this.props.getInfo(global.SESSION.user._id);
     this.setLeftButtons([{
       icon: 'menu',
       onPress: this.openDrawer,

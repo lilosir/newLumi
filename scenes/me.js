@@ -20,7 +20,7 @@ var Me = React.createClass({
 	getInitialState: function() {
 		return {
 			avatar: null,
-			username: null,
+			nickname: null,
 			status:"Hello World",
 			gender:'Male',
 			birthday:'June 3, 1990'
@@ -33,18 +33,21 @@ var Me = React.createClass({
 	      
 	      if(user){        
 	        let avatar = apis.BASE_URL+"/"+user.avatar;
-	        let username = user.username.split("@lakeheadu.ca")[0];
-	        this.setState({avatar: avatar, username:username});
+	        this.setState({avatar: avatar, nickname:user.nickname});
 	      }      
 	    }catch(e){
 	      console.log(e);
 	    }
-	 },
+	},
+
+	openDrawer: function(){
+    	this.props.openDrawer(true);
+  	},
 
 	componentDidMount: function(){
 	    this.setLeftButtons([{
-	      icon: 'navigate-before',
-	      onPress: Actions.pop,
+	      icon: 'menu',
+	      onPress: this.openDrawer,
 	    }]);
 
 	    this.setRightButtons([{
@@ -67,7 +70,7 @@ var Me = React.createClass({
 							<Text style={styles.titleText}> Account </Text>
 						</View>
 						<View style={styles.content}>
-							<Text style={styles.contentText}> {this.state.username} </Text>
+							<Text style={styles.contentText}> {this.state.nickname} </Text>
 						</View>					
 		            </View>
 		            <View style={styles.item}>

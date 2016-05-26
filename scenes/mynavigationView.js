@@ -70,7 +70,7 @@ var mynavigationView = React.createClass({
   getInitialState: function() {
     return {
       avatar:null, 
-      name:null,
+      nickname:null,
     };
   },
 
@@ -78,10 +78,10 @@ var mynavigationView = React.createClass({
     
     if(this.props.Info){
       var avatar = this.props.Info.avatar;
-      var name = this.props.Info.name;
+      var nickname = this.props.Info.nickname;
       this.setState({
         avatar: avatar,
-        name: name,
+        nickname: nickname,
       })      
     }
   },
@@ -98,7 +98,7 @@ var mynavigationView = React.createClass({
             <Avatar size={60} image={<Image source={ {uri:this.state.avatar}}/>} />
           </View>
           <View style={{marginLeft: 15}}>
-            <Text style={{color:'black'}}>{this.state.name}</Text>
+            <Text style={{color:'black'}}>{this.state.nickname}</Text>
           </View>
         </View>
         <ScrollView>

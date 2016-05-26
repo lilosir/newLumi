@@ -64,7 +64,7 @@ var searchFriends = React.createClass({
 				});
 				
 				var fri = friends.map(function(item) {
-	        		return {"username":item.username, "id":item._id, "avatar":apis.BASE_URL+"/"+item.avatar}});
+	        		return {"nickname":item.nickname, "status":item.status, "avatar":apis.BASE_URL+"/"+item.avatar}});
 
 				this.setState({finding: fri});
 			}
@@ -101,8 +101,8 @@ var searchFriends = React.createClass({
 				        <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
 				            <TouchableOpacity onPress={() => this.click(item.username)}>					                      	  
 						        <List            
-						          primaryText={item.username}
-						          secondaryText={item.id}
+						          primaryText={item.nickname}
+						          secondaryText={item.status}
 						          leftAvatar={<Avatar image={<Image source={{ uri: item.avatar }} />} />}/>
 					         </TouchableOpacity>
 				        </View>

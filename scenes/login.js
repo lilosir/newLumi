@@ -108,8 +108,7 @@ var Login = React.createClass({
       
         if(user){        
           let avatar = apis.BASE_URL+"/"+user.avatar;
-          let name = user.username.split("@lakeheadu.ca")[0];
-          this.props.getInfo({avatar: avatar, name:name});
+          this.props.getInfo({avatar: avatar, nickname:user.nickname});
         }      
 
         Actions.contacts({initialPage: 0});

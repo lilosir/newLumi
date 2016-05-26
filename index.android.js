@@ -162,12 +162,12 @@ if (GcmAndroid.launchNotification) {
 
               titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-            <Route name="login" component={Login} title="login" schema="modal"/>
-            <Route name="createAccount" component={CreateAccount}  title="New Account" schema="modal"/>
+            <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
+            <Route name="createAccount" component={CreateAccount} title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
             <Route name="chats" component={Chats}  title="Chats"/>
             <Route name="me" component={Me}  title="Me"/>
-            <Route name="bus" initial={true} component={Bus}  title="Bus"/>
+            <Route name="bus" component={Bus}  title="Bus"/>
           </Router>
         </DrawerLayoutAndroid>
         
