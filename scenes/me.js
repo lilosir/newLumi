@@ -21,9 +21,9 @@ var Me = React.createClass({
 		return {
 			avatar: null,
 			nickname: null,
-			status:"Hello World",
-			gender:'Male',
-			birthday:'June 3, 1990'
+			status:null,
+			gender:null,
+			birthday:null,
 		};
 	},
 
@@ -33,7 +33,14 @@ var Me = React.createClass({
 	      
 	      if(user){        
 	        let avatar = apis.BASE_URL+"/"+user.avatar;
-	        this.setState({avatar: avatar, nickname:user.nickname});
+	        let birthday = user.birthday.split("T")[0];
+	        this.setState({
+	        	avatar: avatar, 
+	        	username: user.username,
+	        	nickname:user.nickname,
+	        	status: user.status,
+	        	gender: user.gender,
+	        	birthday: birthday,});
 	      }      
 	    }catch(e){
 	      console.log(e);
@@ -62,15 +69,24 @@ var Me = React.createClass({
 			<View style={styles.container}>
 				<View style={styles.avatar}>
 					<Avatar size={80} image={<Image source={ {uri:this.state.avatar}}/>} />
+					<Text>{this.state.status}</Text>
 				</View>
 
 				<View style={styles.info}>
 					<View style={styles.item}>
 						<View style={styles.title}>
-							<Text style={styles.titleText}> Account </Text>
+							<Text style={styles.titleText}> Nickname </Text>
 						</View>
 						<View style={styles.content}>
 							<Text style={styles.contentText}> {this.state.nickname} </Text>
+						</View>					
+		            </View>
+		            <View style={styles.item}>
+						<View style={styles.title}>
+							<Text style={styles.titleText}> Email </Text>
+						</View>
+						<View style={styles.content}>
+							<Text style={styles.contentText}> {this.state.username} </Text>
 						</View>					
 		            </View>
 		            <View style={styles.item}>
@@ -87,7 +103,7 @@ var Me = React.createClass({
 							<Text style={styles.titleText}> Gender </Text>
 						</View>
 						<View style={styles.content}>
-							<Text style={styles.contentText}> Male </Text>
+							<Text style={styles.contentText}> {this.state.gender} </Text>
 						</View>					
 		            </View>
 
@@ -96,29 +112,29 @@ var Me = React.createClass({
 							<Text style={styles.titleText}> Birthday </Text>
 						</View>
 						<View style={styles.content}>
-							<Text style={styles.contentText}> 06/03/1990 </Text>
+							<Text style={styles.contentText}> {this.state.birthday} </Text>
 						</View>					
 		            </View>
 		        </View>
 		        <View style={styles.info}>
 		        	<View style={styles.item}>
-						<View style={styles.title}>
+						<View style={{marginLeft: 15, width: 70,}}>
 							<Icon
 								size={20}
 								name="collections"/>
 						</View>
-						<View style={styles.content}>
+						<View style={{marginLeft: 15,}}>
 							<Text style={styles.contentText}> My Posts </Text>
 						</View>					
 		            </View>
 
 		            <View style={styles.item}>
-						<View style={styles.title}>
+						<View style={{marginLeft: 15, width: 70,}}>
 							<Icon
 								size={20}
 								name="group"/>
 						</View>
-						<View style={styles.content}>
+						<View style={{marginLeft: 15,}}>
 							<Text style={styles.contentText}> My friends </Text>
 						</View>					
 		            </View>

@@ -10,11 +10,10 @@ var Contacts = require('./scenes/contacts');
 var Chats = require('./scenes/chats');
 var Me = require('./scenes/me');
 var Bus = require('./scenes/bus');
+var Profile = require('./scenes/profile');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
-// var Profile = require('./scenes/profile');
-// var Me = require('./scenes/me');
 
 var RightButtons  = require('./NavBarParts/RightActionButtons');
 var LeftButtons   = require('./NavBarParts/LeftActionButtons');
@@ -168,6 +167,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="chats" component={Chats}  title="Chats"/>
             <Route name="me" component={Me}  title="Me"/>
             <Route name="bus" component={Bus}  title="Bus"/>
+            <Route name="profile" component={Profile}  title="Profile"/>
           </Router>
         </DrawerLayoutAndroid>
         

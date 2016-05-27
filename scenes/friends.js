@@ -63,14 +63,15 @@ var Friends = React.createClass({
     try{
       var friends = await UserAPIS.getFriends(global.SESSION.user._id);
 
-      console.log("user's friends",friends);
+      // console.log("user's friends",friends);
 
       var fri = friends.map(function(item) {
-        return {"username":item.username, "id":item._id, "avatar":apis.BASE_URL+"/"+item.avatar}});
+        console.log("----------------------",item.nickname)
+        return {"nickname":item.nickname, "status":item.status, "id":item._id, "avatar":apis.BASE_URL+"/"+item.avatar}});
 
       fri.sort(function(a,b){
-        if(a.username > b.username) return 1;
-        if(a.username < b.username) return -1;
+        if(a.nickname > b.nickname) return 1;
+        if(a.nickname < b.nickname) return -1;
         return 0;
       });
 
@@ -131,10 +132,10 @@ var Friends = React.createClass({
         {this.state.friends.map((item,i)=>(
 
         <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
-          <TouchableOpacity onPress={() => this.goChat(item.username, item.id)}>
+          <TouchableOpacity onPress={() => this.goChat(item.nickname, item.id)}>
             <List            
-              primaryText={item.username}
-              secondaryText={item.id}
+              primaryText={item.nickname}
+              secondaryText={item.status}
               leftAvatar={<Avatar image={<Image source={{ uri: item.avatar }} />} />}/>
           </TouchableOpacity>
         </View>
@@ -145,9 +146,8 @@ var Friends = React.createClass({
     )        
   },
 
-  goChat: function(username, id){
-    var username = username.split("@lakeheadu.ca");
-    Actions.chats({titleName: username[0], id: id});
+  goChat: function(nickname, id){
+    Actions.chats({titleName: nickname, id: id});
   },
 
 });

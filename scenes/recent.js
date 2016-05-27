@@ -44,7 +44,8 @@ var Recent = React.createClass({
 				friends_recent.reverse();
 				friends_recent = friends_recent.map(function(item){
 					return {
-						username: item.username,
+						nickname: item.nickname,
+						status:item.status,
 						id: item._id,
 						avatar: apis.BASE_URL+"/"+item.avatar,
 					}
@@ -73,9 +74,8 @@ var Recent = React.createClass({
 	    }, 500);
 	  },
 
-	goChat: function(username, id){
-	    var username = username.split("@lakeheadu.ca");
-	    Actions.chats({titleName: username[0], id: id});
+	goChat: function(nickname, id){
+	    Actions.chats({titleName: nickname, id: id});
 	  },
 
 	render: function() {
@@ -105,10 +105,10 @@ var Recent = React.createClass({
 		        {this.state.recent.map((item,i)=>(
 
 		        <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
-		        <TouchableOpacity onPress={() => this.goChat(item.username, item.id)}>
+		        <TouchableOpacity onPress={() => this.goChat(item.nickname, item.id)}>
 		          <List            
-		            primaryText={item.username}
-		            secondaryText={item.id}
+		            primaryText={item.nickname}
+		            secondaryText={item.status}
 		            leftAvatar={<Avatar image={<Image source={{ uri: item.avatar }} />} />}/>
 		        </TouchableOpacity>
 		        </View>

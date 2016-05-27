@@ -21,6 +21,7 @@ APIS.addAfterActions(function(response) {
 APIS.addAfterActions(function(response) {
 
     if (response.status === 401) {
+        console.warn("after action !== 400")
         var text = JSON.parse(response._bodyText).message || 'unknown error';
         
         ToastAndroid.show(text, ToastAndroid.LONG);
@@ -29,7 +30,7 @@ APIS.addAfterActions(function(response) {
     }
 
     if (response.status !== 200 && response.status !== 201) {
-        console.warn("sfsdfsdf")
+        console.warn("after action !== 200")
         var text = JSON.parse(response._bodyText).message || 'unknown error';
 
         ToastAndroid.show(text, ToastAndroid.LONG);

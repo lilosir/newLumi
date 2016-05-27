@@ -5,6 +5,7 @@ var Dimensions = require('Dimensions');
 var {Avatar, List} = require('react-native-material-design');
 var UserAPIS = require('../operations/users');
 var apis = require('../apis');
+var {Actions} = require('react-native-router-flux');
 
 var {
       width,
@@ -64,7 +65,7 @@ var searchFriends = React.createClass({
 				});
 				
 				var fri = friends.map(function(item) {
-	        		return {"nickname":item.nickname, "status":item.status, "avatar":apis.BASE_URL+"/"+item.avatar}});
+	        		return {"nickname":item.nickname, "status":item.status, "avatar":apis.BASE_URL+"/"+item.avatar, "id": item._id}});
 
 				this.setState({finding: fri});
 			}
@@ -75,7 +76,8 @@ var searchFriends = React.createClass({
 	},
 
 	click: function(value){
-		console.warn(value);
+		// console.warn(value);
+		Actions.profile({id:value})
 	},
 
 	render: function() {
@@ -99,7 +101,7 @@ var searchFriends = React.createClass({
 				        {this.state.finding.map((item,i)=>(
 
 				        <View style={{borderBottomWidth:0.5, borderBottomColor: "#eeeeee",}}  key={i}>
-				            <TouchableOpacity onPress={() => this.click(item.username)}>					                      	  
+				            <TouchableOpacity onPress={() => this.click(item.id)}>					                      	  
 						        <List            
 						          primaryText={item.nickname}
 						          secondaryText={item.status}

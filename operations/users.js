@@ -53,6 +53,12 @@ var Users = {
     return apis.asyncFetch(apis.BASE_URL + '/users/getOne', Object.assign({
       method: 'GET'
     }, params));
+  },
+
+  isFriend: function(params){
+    return apis.asyncFetch(apis.BASE_URL + '/users/isFriend', Object.assign({
+      method: 'GET'
+    }, params));
   }
 }
 
