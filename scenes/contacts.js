@@ -17,6 +17,8 @@ var UserAPIS = require('../operations/users');
 var MessagesAPIS = require('../operations/messages');
 var GcmAndroid = require('react-native-gcm-android');
 
+var GCM = require('../gcmdata');
+
 var { 
   AppRegistry, 
   StyleSheet, 
@@ -83,7 +85,13 @@ var Contacts = React.createClass({
       }            
     });        
     GcmAndroid.requestPermissions();
+
+    // GCM.subscribe(this._contactsGetMessage);
   },
+
+  // _contactsGetMessage: function(msg){
+  //   console.log("contact: ", GCM.messages);
+  // },
 
   render: function() {
     console.log('inital page:',this.props.initialPage);

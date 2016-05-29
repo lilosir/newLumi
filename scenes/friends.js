@@ -66,7 +66,6 @@ var Friends = React.createClass({
       // console.log("user's friends",friends);
 
       var fri = friends.map(function(item) {
-        console.log("----------------------",item.nickname)
         return {"nickname":item.nickname, "status":item.status, "id":item._id, "avatar":apis.BASE_URL+"/"+item.avatar}});
 
       fri.sort(function(a,b){

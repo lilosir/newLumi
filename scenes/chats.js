@@ -72,21 +72,23 @@ var Chats = React.createClass({
       this.setTitleView("Chats");
     }
 
-    try{
-      var mes = await AsyncStorage.getItem("chatTo"+this.props.id);
+    this.setMessages(this.getInitialMessages());
 
-      if(mes){
-        initMes = JSON.parse(mes);
-        this.setMessages(initMes);
-      }else{
-        AsyncStorage.setItem("chatTo"+this.props.id, JSON.stringify(initMes));
-        this.setMessages(initMes);
-      }
+    // try{
+    //   var mes = await AsyncStorage.getItem("chatTo"+this.props.id);
+
+    //   if(mes){
+    //     initMes = JSON.parse(mes);
+    //     this.setMessages(initMes);
+    //   }else{
+    //     AsyncStorage.setItem("chatTo"+this.props.id, JSON.stringify(initMes));
+    //     this.setMessages(initMes);
+    //   }
 
       // AsyncStorage.removeItem("chatTo"+this.props.id);
-    }catch(e){
-      console.warn("err", e);
-    }
+    // }catch(e){
+    //   console.warn("err", e);
+    // }
 
     // this._isMounted = false;
     // this._isMounted = true;
@@ -98,14 +100,45 @@ var Chats = React.createClass({
     
   },
 
+  getInitialMessages: function(){
+    var init_messages = [];
+    for (var i = 0; i < GCM.messages.length; i++) {
+      if(GCM.messages[i].key3 === 'chat' && GCM.messages[i].key4 === 'unread'){
+        GCM.messages[i].key4 = 'read';
+        var msg = JSON.parse(GCM.messages[i].key1);
+        if(GCM.messages[i].key2 === global.SESSION.user._id){
+          msg.position = 'left';
+        }
+        init_messages.push(msg);    
+
+        MessagesAPIS.storeMessages(global.SESSION.user._id, {
+          body:{
+            to: this.props.id,
+            text: msg,
+          }
+        })
+        .then(function(res) {
+          console.log("store messages result:", res);
+          return res;
+        })
+        .catch(function(err){
+          console.log("store messages failed!",err);
+        });
+
+      }
+    }
+
+    return init_messages;
+  },
+
   getmyself: async function(){
       try{
         var user = await UserAPIS.myself(global.SESSION.user._id);
         
         if(user){        
           let avatar = apis.BASE_URL+"/"+user.avatar;
-          let username = user.username.split("@lakeheadu.ca")[0];
-          this.setState({myAvatar: avatar, myName:username});
+          let nickname = user.nickname;
+          this.setState({myAvatar: avatar, myName:nickname});
         }      
       }catch(e){
         console.log(e);
@@ -129,14 +162,13 @@ var Chats = React.createClass({
   },
 
   _onMessage: function(msg) {
-    // console.warn(msg.key1);
-    // var mes = msg.key1;
+    // console.log("chats: ", GCM.messages);
+
     var mes= JSON.parse(msg.key1);
-    // console.warn("!!!!!!!!!!!!!!",mes)
-    if(msg.key2 === global.SESSION.user._id){
+    if(msg.key2 === global.SESSION.user._id && msg.key3 === 'chat'){
       mes.position = 'left';
       this.handleReceive(mes);
-      this.storeLocal(mes);
+      // this.storeLocal(mes);
 
       MessagesAPIS.storeMessages(global.SESSION.user._id, {
         body:{
@@ -185,11 +217,12 @@ var Chats = React.createClass({
   },
 
   handleSend(message = {}) {
-
+    message.name = this.state.myName;
+    message.image = {uri: this.state.myAvatar};
     message.uniqueId = Math.round(Math.random() * 10000000); // simulating server-side unique id generation
     this.setMessages(this._messages.concat(message));
 
-    this.storeLocal(message);
+    // this.storeLocal(message);
 
     // Your logic here
     // Send message.text to your server
@@ -266,7 +299,6 @@ var Chats = React.createClass({
     var earlierMessages = [];
 
     var deadline; 
-    // this._messages   
     if(this._messages.length > 0){
       deadline = this._messages[0].date;
     }else{
@@ -324,7 +356,6 @@ var Chats = React.createClass({
 
     setTimeout(() => {
       if(earlierMessages.length === 0){
-        console.log("!!!!!!! no shows the button!!!!")
         this.setState({
           isLoadingEarlierMessages: false, // hide the loader
           allLoaded: true, // hide the `Load earlier messages` button

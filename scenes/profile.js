@@ -12,6 +12,7 @@ var {
 	Text,
 	StyleSheet,
 	Image,
+	TouchableOpacity,
 } = React;
 
 var Profile = React.createClass({
@@ -25,6 +26,7 @@ var Profile = React.createClass({
 			gender:null,
 			birthday:null,
 			isfriend: false,
+			requestToAdd: false,
 		};
 	},
 
@@ -40,9 +42,9 @@ var Profile = React.createClass({
 	        let birthday = user.birthday.split("T")[0];
 	        this.setState({
 	        	avatar: avatar, 
-	        	username: user.username,
+	        	status: user.status,	        	
 	        	nickname:user.nickname,
-	        	status: user.status,
+	        	username: user.username,
 	        	gender: user.gender,
 	        	birthday: birthday,});
 	      }
@@ -62,10 +64,14 @@ var Profile = React.createClass({
 			})
 			if(user.message === false){
 				this.setState({
-					isfriend: true,
-					username: 'no email to show',
-					gender: 'no gender to show',
+					isfriend: false,
+		        	username: 'no email to show',
+		        	gender: 'no gender to show',
 		        	birthday: 'no birthday to show',
+				});
+			}else{
+				this.setState({
+					isfriend: true,
 				});
 			}
 
@@ -85,7 +91,19 @@ var Profile = React.createClass({
 	},
 
 	render: function() {
-		return (
+		var add, requestToAdd;
+		if(!this.state.isfriend){
+			add  =  <TouchableOpacity onPress={() => this.addFriend()}>
+				        <View style={styles.add}>
+				        	<Text style={styles.addText}> Add </Text>
+				        </View>
+				    </TouchableOpacity>
+		}
+
+		if(this.state.requestToAdd){
+			// requestToAdd = <
+		}
+		return(
 			<View style={styles.container}>
 				<View style={styles.avatar}>
 					<Avatar size={80} image={<Image source={ {uri:this.state.avatar}}/>} />
@@ -136,7 +154,7 @@ var Profile = React.createClass({
 								name="collections"/>
 						</View>
 						<View style={{marginLeft: 15,}}>
-							<Text style={styles.contentText}> My Posts </Text>
+							<Text style={styles.contentText}> All Posts </Text>
 						</View>					
 		            </View>
 
@@ -147,19 +165,20 @@ var Profile = React.createClass({
 								name="group"/>
 						</View>
 						<View style={{marginLeft: 15,}}>
-							<Text style={styles.contentText}> My friends </Text>
+							<Text style={styles.contentText}> no friends to show </Text>
 						</View>					
 		            </View>
 		        </View>
-
-		        <View style={styles.add}>
-		        	<Text style={styles.addText}> Add </Text>
-		        </View>
-
+			    {add}
 			</View>
-		);
-	}
+		)
+	},
 
+	addFriend: function(){
+		this.setState({
+			add: true, 
+		});
+	},
 });
 
 var styles = StyleSheet.create({
@@ -170,7 +189,6 @@ var styles = StyleSheet.create({
 	},
 
 	avatar:{
-		marginTop: 10,
 		backgroundColor: '#ffffff',
 		height: 130,
 		justifyContent: 'center',
@@ -186,7 +204,7 @@ var styles = StyleSheet.create({
 		borderBottomWidth:0.5, 
 		borderBottomColor: "#eeeeee",
 		flexDirection: 'row',
-		height: 30,
+		height: 35,
 		alignItems : 'center'
 	},
 
@@ -222,7 +240,17 @@ var styles = StyleSheet.create({
 	addText: {
 		color: "white",
 		fontSize: 16,
-	}
+	},
+
+	overlay: {
+	    position: 'absolute',
+	    left: 100,
+	    top: 100,
+	    opacity: 0.5,
+	    backgroundColor: 'black',
+	    width: 200,
+	    height: 200,
+	}  
 });
 
 module.exports = Profile;
