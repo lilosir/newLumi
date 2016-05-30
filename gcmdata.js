@@ -9,10 +9,12 @@ module.exports = {
 	// add message
 	addMessage: function(msg) {
 		this.messages.push(msg);
+
 		this.subscribers.forEach(function(fun) {
 			fun(msg);
 		});
 	},
+
 	getMessages: function() {
 		return this.messages;
 	},

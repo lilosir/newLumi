@@ -10,6 +10,7 @@
 var React       = require('react-native');
 var GlobalEvent = require('../GlobalEvent');
 var Icon        = require('react-native-vector-icons/MaterialIcons');
+// var {Avatar, List, Subheader, Icon, IconToggle} = require('react-native-material-design');
 
 var {
   View,

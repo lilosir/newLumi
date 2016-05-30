@@ -103,7 +103,8 @@ var Chats = React.createClass({
   getInitialMessages: function(){
     var init_messages = [];
     for (var i = 0; i < GCM.messages.length; i++) {
-      if(GCM.messages[i].key3 === 'chat' && GCM.messages[i].key4 === 'unread'){
+      if(GCM.messages[i].key3 === 'chat' && GCM.messages[i].key4 === 'unread'
+        && GCM.messages[i].key5 === this.props.id && GCM.messages[i].key2 === global.SESSION.user._id){
         GCM.messages[i].key4 = 'read';
         var msg = JSON.parse(GCM.messages[i].key1);
         if(GCM.messages[i].key2 === global.SESSION.user._id){
@@ -162,13 +163,24 @@ var Chats = React.createClass({
   },
 
   _onMessage: function(msg) {
-    // console.log("chats: ", GCM.messages);
+    let count=0;
+    for (var i = 0; i < GCM.messages.length; i++) {
+      
+      if(GCM.messages[i].key3 === 'chat' && GCM.messages[i].key4 === 'unread'
+        && GCM.messages[i].key5 === this.props.id && GCM.messages[i].key2 === global.SESSION.user._id){
+        count++;
+      }
+    }
 
     var mes= JSON.parse(msg.key1);
-    if(msg.key2 === global.SESSION.user._id && msg.key3 === 'chat'){
+    if(msg.key5 === this.props.id && msg.key2 === global.SESSION.user._id && msg.key3 === 'chat'){
+      // let index = GCM.messages.indexOf(msg);
+
       mes.position = 'left';
       this.handleReceive(mes);
-      // this.storeLocal(mes);
+
+      // let index = GCM.messages.indexOf(msg);
+      // GCM.messages[index].key4 = 'read';
 
       MessagesAPIS.storeMessages(global.SESSION.user._id, {
         body:{
@@ -316,7 +328,6 @@ var Chats = React.createClass({
       return res;
     })
     .then(function(msg) {
-      console.log("111111111111",msg)
       if(msg.length === 0){
         console.log("no records now");
         earlierMessages = [];
@@ -391,6 +402,14 @@ var Chats = React.createClass({
   },
 
   goRecent: function(){
+
+    for (var i = 0; i < GCM.messages.length; i++) {
+      if(GCM.messages[i].key3 === 'chat' && GCM.messages[i].key4 === 'unread'
+        && GCM.messages[i].key5 === this.props.id && GCM.messages[i].key2 === global.SESSION.user._id){
+        GCM.messages[i].key4 = 'read';
+      }
+    }
+        
 
     UserAPIS.updateRecent(global.SESSION.user._id,{
       body:{

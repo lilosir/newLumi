@@ -109,7 +109,15 @@ var Recent = React.createClass({
 		          <List            
 		            primaryText={item.nickname}
 		            secondaryText={item.status}
-		            leftAvatar={<Avatar image={<Image source={{ uri: item.avatar }} />} />}/>
+		            leftAvatar={
+		            	<IconToggle
+							color="paperGrey900"
+							badge={{ value: 0 }}
+							onPress={() => { this.incrementBadge(1) }}>
+
+		            		<Avatar image={<Image source={{ uri: item.avatar }} />} />
+		            	</IconToggle>
+		            }/>
 		        </TouchableOpacity>
 		        </View>
 		        ))}
