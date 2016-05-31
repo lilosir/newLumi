@@ -11,6 +11,8 @@ var React       = require('react-native');
 var GlobalEvent = require('../GlobalEvent');
 var Icon        = require('react-native-vector-icons/MaterialIcons');
 // var {Avatar, List, Subheader, Icon, IconToggle} = require('react-native-material-design');
+var GCM = require('../gcmdata');
+var {Avatar, List, Subheader, IconToggle} = require('react-native-material-design');
 
 var {
   View,
@@ -23,13 +25,13 @@ var {
 	Actions
 } = require('react-native-router-flux');
 
-var counter = 0;
 
 var ActionButtons = React.createClass({
 
 	getInitialState: function() {
 		return {
-			buttons: []
+			buttons: [],
+			notification_count:null,
 		};
 	},
 
@@ -42,6 +44,26 @@ var ActionButtons = React.createClass({
 				self.onLayout = layoutCallback;
 			}.bind(this)
 		);
+
+		GCM.subscribe(this._onMessage);
+	},
+
+	_onMessage(msg){
+		
+		var counter = 0;
+		//fetch from the server first..
+		for (var i = 0; i < GCM.messages.length; i++) {
+      
+	      if(GCM.messages[i].key3 === 'addFriendRequest' && GCM.messages[i].key4 === 'unread'
+	        && GCM.messages[i].key2 === global.SESSION.user._id){
+	        counter++;
+	      }
+	    }
+
+	    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",counter);
+	    this.setState({
+	    	notification_count: counter,
+	    });
 	},
 
 	componentDidMount: function() {
@@ -63,7 +85,18 @@ var ActionButtons = React.createClass({
 					<TouchableOpacity key={i} onPress={b.onPress || console.log } style={styles.barButtonIconWrapper}>
 			            { function(){ 
 			              if (b.icon) {
-				            return <Icon name={b.icon} style={styles.barButtonIcon} />
+			              	if(this.state.notification_count > 0){
+								return (
+					            	<IconToggle
+										color="paperGrey900"
+										badge={{ value: this.state.notification_count }}>
+					            		<Icon name={b.icon} style={styles.barButtonIcon} />
+					            	</IconToggle>
+				            	)
+							}else{
+								return <Icon name={b.icon} style={styles.barButtonIcon} />
+							}
+				            
 				          } else{
 				          	return <Text style={styles.barButtonText}>{b.text}</Text>
 				          }
@@ -94,7 +127,8 @@ var styles = StyleSheet.create({
 	},
 	barButtonIcon: {
 	    color: "#f4cb0d",
-	    fontSize: 22
+	    fontSize: 22,
+	    margin: 12,
 	},
 	barButtonText: {
 	    color: "#f4cb0d",

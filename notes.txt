@@ -4,3 +4,5 @@
 5. initial and login register gcm
 6. gcm one user one devices..
 7. is typing...
+8. recent friend message you add into recent list passively, and toggle.
+9. disable other buttons when the overlay comes

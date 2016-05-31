@@ -19,7 +19,6 @@ APIS.addAfterActions(function(response) {
 
 // // check status
 APIS.addAfterActions(function(response) {
-
     if (response.status === 401) {
         console.warn("after action !== 400")
         var text = JSON.parse(response._bodyText).message || 'unknown error';

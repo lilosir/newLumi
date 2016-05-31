@@ -6,6 +6,7 @@ var {Actions} = require('react-native-router-flux');
 var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
 var apis = require('../apis');
 var UserAPIS = require('../operations/users');
+var Spinner = require('react-native-spinkit');
 
 var {
 	View,
@@ -13,7 +14,11 @@ var {
 	StyleSheet,
 	Image,
 	TouchableOpacity,
+	Dimensions,
+	ToastAndroid,
 } = React;
+
+var {height, width} = Dimensions.get('window');
 
 var Profile = React.createClass({
 
@@ -26,7 +31,7 @@ var Profile = React.createClass({
 			gender:null,
 			birthday:null,
 			isfriend: false,
-			requestToAdd: false,
+			isLoading: false,
 		};
 	},
 
@@ -92,17 +97,23 @@ var Profile = React.createClass({
 
 	render: function() {
 		var add, requestToAdd;
+
+		
+		if(this.state.isLoading){
+			var spin = <Spinner size={30} type={'CircleFlip'} color={'grey'}/>
+		}
+
 		if(!this.state.isfriend){
 			add  =  <TouchableOpacity onPress={() => this.addFriend()}>
 				        <View style={styles.add}>
 				        	<Text style={styles.addText}> Add </Text>
 				        </View>
+				        <View style={{marginTop: 10, alignItems : 'center'}}>
+				        	{spin}
+				        </View>
 				    </TouchableOpacity>
 		}
 
-		if(this.state.requestToAdd){
-			// requestToAdd = <
-		}
 		return(
 			<View style={styles.container}>
 				<View style={styles.avatar}>
@@ -170,14 +181,34 @@ var Profile = React.createClass({
 		            </View>
 		        </View>
 			    {add}
+			    {requestToAdd}
 			</View>
 		)
 	},
 
-	addFriend: function(){
+	addFriend: async function(){
+
 		this.setState({
-			add: true, 
+			isLoading:true, 
 		});
+		try{
+			let res = await UserAPIS.addFriendRequest(global.SESSION.user._id, {
+				body:{
+					from: this.state.nickname,
+	  				to: this.props.id,
+				}
+			});
+
+			if(res){
+				this.setState({
+					isLoading: false, 
+				});
+				ToastAndroid.show(res.message, ToastAndroid.SHORT);
+			}
+		}catch(e){
+			console.log("err",e)
+		}
+		
 	},
 });
 
@@ -243,13 +274,15 @@ var styles = StyleSheet.create({
 	},
 
 	overlay: {
+		opacity: 0.9,
 	    position: 'absolute',
-	    left: 100,
-	    top: 100,
-	    opacity: 0.5,
-	    backgroundColor: 'black',
-	    width: 200,
-	    height: 200,
+	    left: 0,
+	    top: 130,
+	    backgroundColor: '#F5FCFF',
+	    width: width,
+	    height: 250,
+	    alignItems: 'center',
+	    justifyContent: 'center',
 	}  
 });
 

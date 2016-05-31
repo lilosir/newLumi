@@ -9,6 +9,8 @@ var Reload = require('./reload');
 var UserAPIS = require('../operations/users');
 var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
 var TimerMixin = require('react-timer-mixin');
+var GCM = require('../gcmdata');
+
 var {
 	View,
 	Text,
@@ -35,7 +37,13 @@ var Recent = React.createClass({
 		this.setTimeout(()=>{
 	      this.fetchRecent();
 	    }, 500);   
+
+		// GCM.subscribe(this._getUnreadMessages);
 	},
+
+	// _getUnreadMessages: function(msg){
+	// 	for (var i = 0; i < GCM.messages.length; i++) {
+	// },
 
 	fetchRecent: async function(){
 		try{
@@ -112,8 +120,7 @@ var Recent = React.createClass({
 		            leftAvatar={
 		            	<IconToggle
 							color="paperGrey900"
-							badge={{ value: 0 }}
-							onPress={() => { this.incrementBadge(1) }}>
+							badge={{ value: 0 }}>
 
 		            		<Avatar image={<Image source={{ uri: item.avatar }} />} />
 		            	</IconToggle>
