@@ -51,7 +51,8 @@ var Profile = React.createClass({
 	        	nickname:user.nickname,
 	        	username: user.username,
 	        	gender: user.gender,
-	        	birthday: birthday,});
+	        	birthday: birthday,
+	        });
 	      }
 	    }catch(e){
 	      console.log(e);
@@ -194,7 +195,7 @@ var Profile = React.createClass({
 		try{
 			let res = await UserAPIS.addFriendRequest(global.SESSION.user._id, {
 				body:{
-					from: this.state.nickname,
+					from: global.SESSION.user.nickname,
 	  				to: this.props.id,
 				}
 			});

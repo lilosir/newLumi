@@ -16,6 +16,7 @@ var Icon = require('react-native-vector-icons/FontAwesome');
 var UserAPIS = require('../operations/users');
 var MessagesAPIS = require('../operations/messages');
 var GcmAndroid = require('react-native-gcm-android');
+var NotificationAPIS = require('../operations/notifications');
 
 var GCM = require('../gcmdata');
 
@@ -39,6 +40,12 @@ var {
 var Contacts = React.createClass({
 
   mixins: [nav],
+
+  getInitialState: function() {
+    return {
+      notification_count: 0,
+    };
+  },
 
   openDrawer: function(){
     this.props.openDrawer(true);
@@ -66,10 +73,13 @@ var Contacts = React.createClass({
       onPress: this.openDrawer,
     }]);
 
-    this.setRightButtons([{
-      icon: 'inbox',
-      onPress: Actions.pop
-    }]);  
+    this._getInitialNotificationNumber();
+    // this.setRightButtons([{
+    //   icon: 'inbox',
+    //   // notification_count: this._getInitialNotificationNumber(),
+    //   notification_count: 0,
+    //   onPress: Actions.pop
+    // }]);  
 
     GcmAndroid.addEventListener('register', function(token){
       // console.warn('send gcm token', token);
@@ -86,15 +96,69 @@ var Contacts = React.createClass({
     });        
     GcmAndroid.requestPermissions();
 
-    // GCM.subscribe(this._contactsGetMessage);
+    
+    GCM.subscribe(this._contactOnMessage);
   },
 
-  // _contactsGetMessage: function(msg){
-  //   console.log("contact: ", GCM.messages);
-  // },
+  _getInitialNotificationNumber: async function(){
+    var count = 0;
+    try{
+      var notifications = await NotificationAPIS.getnotifications(global.SESSION.user._id);
+
+      if(notifications.length > 0){
+        for (var i = 0; i < notifications[0].contents.length; i++) {
+          if(notifications[0].contents[i].ifread == false){
+            count ++;
+          }
+        }
+
+        this.setState({
+          notification_count: count,
+        });
+
+        this.setRightButtons([{
+          icon: 'inbox',
+          notification_count: count,
+          onPress: Actions.pop
+        }]);  
+
+      }else{
+         this.setRightButtons([{
+          icon: 'inbox',
+          notification_count: 0,
+          onPress: Actions.pop
+        }]);  
+      }
+    }catch(e){
+      console.warn("err: ",e);
+      return 0;
+    }
+
+  },
+
+  _contactOnMessage(msg){
+    // console.log('-----------------------',msg);
+    var counter = 0;
+    for (var i = 0; i < GCM.messages.length; i++) {
+      if(GCM.messages[i].key3 === 'addFriendRequest' && GCM.messages[i].key4 === 'unread'
+          && GCM.messages[i].key2 === global.SESSION.user._id){
+          counter++;
+        }
+    }
+
+    this.setState({
+      notification_count: this.state.notification_count+counter,
+    });
+
+    this.setRightButtons([{
+      icon: 'inbox',
+      notification_count: this.state.notification_count,
+      onPress: Actions.pop
+    }]);
+  },
 
   render: function() {
-    console.log('inital page:',this.props.initialPage);
+    // console.log('inital page:',this.props.initialPage);
     return (
       <ScrollableTabView 
         initialPage={this.props.initialPage} 
