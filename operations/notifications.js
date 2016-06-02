@@ -7,6 +7,12 @@ var Notifications = {
       method: 'GET'
     }, params));
   }, 
+
+  changeToRead: function(id, params){
+    return apis.asyncFetch(apis.BASE_URL + '/notifications/changeToRead/'+ id, Object.assign({
+      method: 'POST'
+    }, params));
+  }, 
 }
 
 module.exports = Notifications;

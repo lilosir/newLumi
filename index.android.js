@@ -11,6 +11,7 @@ var Chats = require('./scenes/chats');
 var Me = require('./scenes/me');
 var Bus = require('./scenes/bus');
 var Profile = require('./scenes/profile');
+var Notifications = require('./scenes/notifications');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -168,6 +169,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="me" component={Me}  title="Me"/>
             <Route name="bus" component={Bus}  title="Bus"/>
             <Route name="profile" component={Profile}  title="Profile"/>
+            <Route name="notifications" component={Notifications}  title="Notifications"/>
           </Router>
         </DrawerLayoutAndroid>
         

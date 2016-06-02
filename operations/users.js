@@ -65,7 +65,13 @@ var Users = {
     return apis.asyncFetch(apis.BASE_URL + '/users/addFriendRequest/' + id, Object.assign({
       method: 'POST'
     }, params));
-  }
+  },
+
+  addFriend: function(id, params){
+    return apis.asyncFetch(apis.BASE_URL + '/users/addFriend/' + id, Object.assign({
+      method: 'POST'
+    }, params));
+  },
 }
 
 module.exports = Users;

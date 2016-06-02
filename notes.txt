@@ -6,3 +6,8 @@
 7. is typing...
 8. recent friend message you add into recent list passively, and toggle.
 9. disable other buttons when the overlay comes
+
+add button => added
+get notification if accept
+add then go list
+notification -1 and +1
