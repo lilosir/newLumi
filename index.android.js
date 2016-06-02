@@ -12,6 +12,7 @@ var Me = require('./scenes/me');
 var Bus = require('./scenes/bus');
 var Profile = require('./scenes/profile');
 var Notifications = require('./scenes/notifications');
+var Mycircle = require('./scenes/mycircle');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -170,6 +171,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="bus" component={Bus}  title="Bus"/>
             <Route name="profile" component={Profile}  title="Profile"/>
             <Route name="notifications" component={Notifications}  title="Notifications"/>
+            <Route name="mycircle" component={Mycircle}  title="My Circle"/>
           </Router>
         </DrawerLayoutAndroid>
         

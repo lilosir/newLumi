@@ -40,7 +40,7 @@ var {
   navigationView,
 } = React;
 
-var Contacts = React.createClass({
+var Mycircle = React.createClass({
 
   mixins: [nav],
 
@@ -52,20 +52,6 @@ var Contacts = React.createClass({
 
   openDrawer: function(){
     this.props.openDrawer(true);
-  },
-
-  getmyself: async function(){
-    try{
-      var user = await UserAPIS.myself(global.SESSION.user._id);
-      
-      if(user){        
-        let avatar = apis.BASE_URL+"/"+user.avatar;
-        // let name = user.username.split("@lakeheadu.ca")[0];
-        this.props.getInfo({avatar: avatar, nickname:user.nickname});
-      }      
-    }catch(e){
-      console.log(e);
-    }
   },
 
   componentDidMount: async function(){
@@ -88,24 +74,8 @@ var Contacts = React.createClass({
     //   notification_count:0,
     //   onPress: this.goNotificaitons,
     // }]);  
-
-    GcmAndroid.addEventListener('register', function(token){
-      // console.warn('send gcm token', token);
-      try{
-          MessagesAPIS.register({
-            body:{
-              token: token,
-              userid: global.SESSION.user._id
-            }
-          });
-      }catch(e){
-        console.warn(e)
-      }            
-    });        
-    GcmAndroid.requestPermissions();
-
     
-    GCM.subscribe(this._contactOnMessage);
+    GCM.subscribe(this._aroundmeOnMessage);
   },
 
   _getInitialNotificationNumber: async function(){
@@ -141,7 +111,7 @@ var Contacts = React.createClass({
     Actions.notifications();
   },
 
-  _contactOnMessage(msg){
+  _aroundmeOnMessage(msg){
     // console.log('-----------------------',msg);
     var count = 0;
     for (var i = 0; i < GCM.messages.length; i++) {
@@ -163,7 +133,7 @@ var Contacts = React.createClass({
 
     // Actions.contacts({initialPage: 1});
   },
-//<Notifications tabLabel='drafts|Bala'/>
+
   render: function() {
     // console.log('inital page:',this.props.initialPage);
     return (
@@ -176,10 +146,10 @@ var Contacts = React.createClass({
         tabBarActiveTextColor="#f4cb0d"
         tabBarInactiveTextColor="#f4cb0d"
         renderTabBar={() => <CustomTabbar/>}>
-        <Recent tabLabel='access-time|Recent'/>
-        <Friends tabLabel='group|Friends'/>
-        <SearchFriends tabLabel='search|Search'/>
-        
+        <Recent tabLabel='whatshot|News'/>
+        <Friends tabLabel='camera|Around Me'/>
+        <SearchFriends tabLabel='store-mall-directory|LU Market'/>
+        <Notifications tabLabel='accessibility|Bala'/>
       </ScrollableTabView>
     )        
   },
@@ -196,4 +166,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = Contacts;
+module.exports = Mycircle;

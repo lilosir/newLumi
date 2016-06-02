@@ -6,7 +6,7 @@ var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material
 var apis = require('../apis');
 var {Actions} = require('react-native-router-flux');
 var UserAPIS = require('../operations/users');
-
+var nav = require('../NavbarMixin');
 var GCM = require('../gcmdata');
 
 var { 
@@ -22,6 +22,8 @@ var {
 
 var Notifications = React.createClass({
 
+  mixins: [nav],
+
 	getInitialState: function() {
 		return {
 			isempty:true,
@@ -30,10 +32,19 @@ var Notifications = React.createClass({
 	},
 
 	componentDidMount: function() {
+    this.setLeftButtons([{
+      icon: 'navigate-before',
+      onPress: this.goContact,
+    }]);
+
 		this._getInitialNotification();
 
     // console.log("before add...........",GCM.getMessages());
 	},
+
+  goContact: function(){
+    Actions.contacts({initialPage: 1});
+  },
 
 	_getInitialNotification: async function(){
 
@@ -46,13 +57,35 @@ var Notifications = React.createClass({
       	});
 
         var allnotifications = notifications[0].contents.map(function(item){
-        	return {
-            id: item.from._id,
-        		avatar: apis.BASE_URL+"/"+item.from.avatar,
-        		nickname: item.from.nickname,
-        		text: "sent you a friend request",
-        	}
-        })
+          if(!item.ifread){
+            return {
+              id: item.from._id,
+              avatar: apis.BASE_URL+"/"+item.from.avatar,
+              nickname: item.from.nickname,
+              text: "sent you a friend request",
+              ifread: (
+                <TouchableOpacity onPress={()=> this.add(item.from._id, item.from.nickname)}>
+                    <View style={styles.add}>
+                      <Text style={styles.addText}> Add </Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+            }
+          }else{
+            return {
+              id: item.from._id,
+              avatar: apis.BASE_URL+"/"+item.from.avatar,
+              nickname: item.from.nickname,
+              text: "sent you a friend request",
+              ifread: (
+                <View style={{marginRight: 15}}>
+                    <Text> Added </Text>
+                </View>
+                )
+            }
+          }
+        	
+        }.bind(this))
 
         this.setState({
         	notifications: allnotifications,
@@ -130,11 +163,11 @@ var Notifications = React.createClass({
                      }
                   />
                 </View>
-                <TouchableOpacity onPress={()=> this.add(item.id, item.nickname)}>
-                  <View style={styles.add}>
-                    <Text style={styles.addText}> Add </Text>
-                  </View>
-                </TouchableOpacity> 
+                {
+                  item.ifread
+                }
+                
+                
               </View>
             ))}
     
@@ -148,6 +181,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+    marginTop: 57,
   },
   listView: {
     paddingTop: 20,

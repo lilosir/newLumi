@@ -12,7 +12,7 @@ var GlobalEvent = require('../GlobalEvent');
 var Icon        = require('react-native-vector-icons/MaterialIcons');
 // var {Avatar, List, Subheader, Icon, IconToggle} = require('react-native-material-design');
 var {Avatar, List, Subheader, IconToggle} = require('react-native-material-design');
-
+var nav = require('../NavbarMixin');
 var GCM = require('../gcmdata');
 
 var {
@@ -28,6 +28,8 @@ var {
 
 
 var ActionButtons = React.createClass({
+
+	mixins: [nav],
 
 	getInitialState: function() {
 		return {
@@ -69,26 +71,33 @@ var ActionButtons = React.createClass({
 			{this.state.buttons.map(function(b, i) {
 
 				return (
-					<TouchableOpacity key={i} onPress={b.onPress || console.log } style={styles.barButtonIconWrapper}>
+					<View key={i}>
 			            { function(){ 
 			              if (b.icon) {
 			              	if(b.notification_count > 0){
 								return (
 					            	<IconToggle
 										color="paperGrey900"
-										badge={{ value: b.notification_count }}>
+										badge={{ value: b.notification_count }}
+										onPress={b.onPress}>
 					            		<Icon name={b.icon} style={styles.barButtonIcon} />
 					            	</IconToggle>
 				            	)
 							}else{
-								return <Icon name={b.icon} style={styles.barButtonIcon} />
+								return ( 
+									<TouchableOpacity key={i} onPress={b.onPress || console.log } style={styles.barButtonIconWrapper}>
+										<Icon name={b.icon} style={styles.barButtonIcon} />
+									</TouchableOpacity> )
 							}
 				            
 				          } else{
-				          	return <Text style={styles.barButtonText}>{b.text}</Text>
+				          	return (
+				          		<TouchableOpacity key={i} onPress={b.onPress || console.log } style={styles.barButtonIconWrapper}>
+				          			<Text style={styles.barButtonText}>{b.text}</Text>
+				          		</TouchableOpacity> )
 				          }
 			            }.bind(this).call()}
-			        </TouchableOpacity>
+			        </View>
 				);
 
 			}.bind(this))}

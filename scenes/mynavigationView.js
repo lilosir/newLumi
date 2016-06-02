@@ -26,16 +26,16 @@ const routers = [
     },
   },
   {
-    name:'Around Me',
+    name:'My Circle',
     icon: 'fiber-new',
     action: function(){
       this.props.openDrawer(false);
-      Actions.contacts({initialPage: 0})
+      Actions.mycircle({initialPage: 0})
     },
   },
   {
-    name:'Weather',
-    icon: 'cloud',
+    name:'My Study',
+    icon: 'school',
     action: function(){
       this.props.openDrawer(false);
       Actions.contacts({initialPage: 0})
