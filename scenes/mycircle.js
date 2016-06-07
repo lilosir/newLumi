@@ -9,7 +9,8 @@ var Reload = require('./reload');
 var Friends = require('./friends');
 
 var SearchFriends = require('./searchFriends');
-var AroundMe = require('./aroundme')
+var AroundMe = require('./aroundme');
+var Bala = require('./bala');
 
 var Notifications = require('./notifications');
 
@@ -150,7 +151,7 @@ var Mycircle = React.createClass({
         <Friends tabLabel='whatshot|News'/>
         <AroundMe tabLabel='camera|Around Me'/>
         <SearchFriends tabLabel='store-mall-directory|LU Market'/>
-        <Notifications tabLabel='accessibility|Bala'/>
+        <Bala tabLabel='accessibility|Bala'/>
       </ScrollableTabView>
     )        
   },

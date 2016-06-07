@@ -35,7 +35,7 @@ var AroundMePost = React.createClass({
 
 	componentDidMount: function() {
 		this.setLeftButtons([{
-	      icon: 'navigate-before',
+	      icon: 'arrow-back',
 	      onPress: Actions.pop
 	    }]);
 
@@ -75,7 +75,7 @@ var AroundMePost = React.createClass({
 			{	
 				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
 				nickname: "123",
-				text:'sdfsdfttttttttttiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii!',
+				text:'sdfsdfttttttttttiiiiiiiiiiiiiiiiiiii!',
 			},
 		];
 	},
@@ -156,6 +156,7 @@ var styles = StyleSheet.create({
 	},
 
 	author: {
+		alignItems: "center",
 		margin: 10,
 		flexDirection: 'row'
 	},

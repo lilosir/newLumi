@@ -21,10 +21,14 @@ var {
 	TouchableOpacity,
 	Dimensions,
 	RefreshControl,
+	Animated,
 }= React;
 
 
 var {height, width} = Dimensions.get('window');
+
+var createLeft = width - 60;
+var createTop = height - 180;
 
 var AroundMe = React.createClass({
 
@@ -32,6 +36,8 @@ var AroundMe = React.createClass({
 
 	getInitialState: function() {
 		return {
+			create_animation: new Animated.Value(0),
+			animateValueY: new Animated.Value(0),
 			isRefreshing: false,
 			news: [],
 			isLoadingOld: false,
@@ -46,6 +52,22 @@ var AroundMe = React.createClass({
 		this.setState({
 			news: this.getInitialNews()
 		});
+
+		Animated.timing(
+			this.state.create_animation,
+			{
+				toValue: 100,
+				duration: 1000,
+			}
+		).start();
+
+		Animated.timing(
+			this.state.animateValueY,
+			{
+				toValue: createTop - height ,
+				duration: 1000,
+			}
+		).start();
 
 	},
 
@@ -115,8 +137,6 @@ var AroundMe = React.createClass({
 				},
 	    	]
 
-	    	// newPost = newPost.concat(this.state.news);
-
 	    	this.setState({
 	    		news: newPost.concat(this.state.news),
 	    	});
@@ -161,7 +181,16 @@ var AroundMe = React.createClass({
 		this._getOld();		
 	},
 
+	create: function(){
+		console.warn("SDFSDF")
+	},
+
 	render: function() {
+
+		var rotateAnimation = this.state.create_animation.interpolate({
+	        inputRange: [0, 100],
+	      	outputRange: ['0deg', '720deg']
+	    });
 
 	    if(this.state.isLoadingOld){
 	    	var spin = <View style={styles.loadmore}>
@@ -176,6 +205,7 @@ var AroundMe = React.createClass({
 	    }
 
 		return (
+			<View style={{flex:1}}>
 			<ScrollView 
 				ref={(component) => this._scrollView = component}
 				style={styles.container}
@@ -188,7 +218,8 @@ var AroundMe = React.createClass({
 		            progressBackgroundColor="#00437a"/>}>
 
 		        {this.state.news.map((item,i)=>(
-		        	<TouchableOpacity onPress={()=> this._goThisPost(item)} key={i}>
+		        <View style={{marginTop:5, marginBottom:5}} key={i}>
+		        	<TouchableOpacity onPress={()=> this._goThisPost(item)} >
 		        		<View style={styles.listView}>
 				        	<View style={styles.icons}>
 				        		<Icon name={"sms"} color="#ff531a" size={20}/>
@@ -208,23 +239,53 @@ var AroundMe = React.createClass({
 				        				<Avatar image={<Image source={{ uri: item.avatar }} />} size={25}/>
 				        			</View>
 				        			<View style={{marginLeft: 10}}>
-				        				<Text> {item.nickname}</Text>
+				        				<Text style={{color: '#1a0f00'}}> {item.nickname}</Text>
 				        			</View>
 				        		</View>
 				        	</View>
 				        </View>		
 		        	</TouchableOpacity>		
+		        </View>
 		        ))}
 		        {spin}
 		        {button}
 	      	</ScrollView>
+	      	<Animated.View 
+		      	style={
+		      		[styles.create, 
+		      		{transform: 
+		      			[	
+		      				{translateY: this.state.animateValueY},
+		      				{rotate: rotateAnimation},
+		      			]
+		      		}]}>
+		      	<TouchableOpacity onPress={this.create}>
+		      		<View style={{flex:1, justifyContent: 'center', alignItems: 'center',alignSelf: 'center'}}>
+		      			<Icon size={45} name="add" color='white'/>
+		      		</View>
+		      	</TouchableOpacity>
+	      	</Animated.View>
+	      	
+	      	</View>
     	);
   	}
 });
 
+	      			
 var styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
+  },
+
+  create: {
+  	position: 'absolute',
+  	width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'green',
+    opacity: 0.8,
+    left: createLeft,
+    top:  height,    
   },
 
   loadmore: {
@@ -238,7 +299,10 @@ var styles = StyleSheet.create({
   	flexDirection: 'row',
     borderBottomWidth:0.5,
     borderBottomColor: "#dddddd",
+    borderTopWidth:0.5,
+    borderTopColor: "#dddddd",
     height: 110,
+    backgroundColor: "#f5f5f0"
   },
 
   icons: {
@@ -255,6 +319,7 @@ var styles = StyleSheet.create({
 
   reply: {
   	fontSize : 10,
+  	color: '#eaeae1',
   },
 
   contents: {
@@ -277,7 +342,7 @@ var styles = StyleSheet.create({
   subjectText: {
   	fontWeight: '200',
   	fontSize: 18,
-  	color: 'black',
+  	color: '#1a0f00',
   },
 
   image: {
