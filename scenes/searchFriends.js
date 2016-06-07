@@ -23,7 +23,7 @@ var {
 
 var searchFriends = React.createClass({
 
-	 componentDidUpdate() {
+	componentDidUpdate() {
         let innerScrollView = this._scrollView.refs.InnerScrollView;
         let scrollView = this._scrollView.refs.ScrollView;
 

@@ -30,7 +30,7 @@ const routers = [
     icon: 'fiber-new',
     action: function(){
       this.props.openDrawer(false);
-      Actions.mycircle({initialPage: 0})
+      Actions.mycircle({initialPage: 1})
     },
   },
   {

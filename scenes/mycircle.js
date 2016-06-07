@@ -7,8 +7,9 @@ var apis = require('../apis');
 // var Loading = require('./loading');
 var Reload = require('./reload');
 var Friends = require('./friends');
-var Recent = require('./recent');
+
 var SearchFriends = require('./searchFriends');
+var AroundMe = require('./aroundme')
 
 var Notifications = require('./notifications');
 
@@ -146,8 +147,8 @@ var Mycircle = React.createClass({
         tabBarActiveTextColor="#f4cb0d"
         tabBarInactiveTextColor="#f4cb0d"
         renderTabBar={() => <CustomTabbar/>}>
-        <Recent tabLabel='whatshot|News'/>
-        <Friends tabLabel='camera|Around Me'/>
+        <Friends tabLabel='whatshot|News'/>
+        <AroundMe tabLabel='camera|Around Me'/>
         <SearchFriends tabLabel='store-mall-directory|LU Market'/>
         <Notifications tabLabel='accessibility|Bala'/>
       </ScrollableTabView>
