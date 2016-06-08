@@ -10,3 +10,6 @@ project(':react-native-system-notification').projectDir = new File(settingsDir, 
 
 include ':react-native-system-notification'
 project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')
+
+include ':react-native-image-picker'
+project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')

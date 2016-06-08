@@ -14,6 +14,7 @@ var Profile = require('./scenes/profile');
 var Notifications = require('./scenes/notifications');
 var Mycircle = require('./scenes/mycircle');
 var AroundMePost = require('./scenes/aroundmePost');
+var CreatePost = require('./scenes/createPost');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -164,7 +165,7 @@ if (GcmAndroid.launchNotification) {
 
               titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-            <Route name="login" component={Login} initial={true} title="login" schema="modal"/>
+            <Route name="login" component={Login} title="login" schema="modal"/>
             <Route name="createAccount" component={CreateAccount} title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
             <Route name="chats" component={Chats}  title="Chats"/>
@@ -173,7 +174,8 @@ if (GcmAndroid.launchNotification) {
             <Route name="profile" component={Profile}  title="Profile"/>
             <Route name="notifications" component={Notifications}  title="Notifications"/>
             <Route name="mycircle" component={Mycircle}  title="My Circle"/>
-            <Route name="aroundmepost" component={AroundMePost}  title="aroundmepost"/>
+            <Route name="aroundmepost" component={AroundMePost}  title="aroundmepost" schema="modal"/>
+            <Route name="createpost" component={CreatePost} initial={true} title="New Post" schema="modal"/>
           </Router>
         </DrawerLayoutAndroid>
         

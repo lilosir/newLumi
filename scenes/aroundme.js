@@ -27,8 +27,8 @@ var {
 
 var {height, width} = Dimensions.get('window');
 
-var createLeft = width - 60;
-var createTop = height - 180;
+var createLeft = width - 80;
+var createTop = height - 200;
 
 var AroundMe = React.createClass({
 
@@ -182,7 +182,7 @@ var AroundMe = React.createClass({
 	},
 
 	create: function(){
-		console.warn("SDFSDF")
+		Actions.createpost();
 	},
 
 	render: function() {
@@ -260,8 +260,8 @@ var AroundMe = React.createClass({
 		      			]
 		      		}]}>
 		      	<TouchableOpacity onPress={this.create}>
-		      		<View style={{flex:1, justifyContent: 'center', alignItems: 'center',alignSelf: 'center'}}>
-		      			<Icon size={45} name="add" color='white'/>
+		      		<View style={styles.create2}>
+		      			<Icon size={40} name="add" color="#ffffff"/>
 		      		</View>
 		      	</TouchableOpacity>
 	      	</Animated.View>
@@ -274,7 +274,7 @@ var AroundMe = React.createClass({
 	      			
 var styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f5f5f0',
   },
 
   create: {
@@ -282,10 +282,24 @@ var styles = StyleSheet.create({
   	width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'green',
+    backgroundColor: '#99e6ff',
+    justifyContent: 'center', 
+  	alignItems: 'center',
+  	alignSelf: 'center',
     opacity: 0.8,
     left: createLeft,
     top:  height,    
+  },
+
+  create2: {
+  	flex:1, 
+  	justifyContent: 'center', 
+  	alignItems: 'center',
+  	width:40,
+    height: 40,
+    borderRadius: 20,
+    opacity: 0.95,
+    backgroundColor: '#0099cc',
   },
 
   loadmore: {
@@ -302,7 +316,7 @@ var styles = StyleSheet.create({
     borderTopWidth:0.5,
     borderTopColor: "#dddddd",
     height: 110,
-    backgroundColor: "#f5f5f0"
+    backgroundColor: "#ffffff"
   },
 
   icons: {
