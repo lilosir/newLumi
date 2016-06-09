@@ -8,6 +8,7 @@ var {
   TextInput,
   Dimensions,
   Image,
+  ScrollView,
 } = React;
 
 var nav  = require('../NavbarMixin');
@@ -25,7 +26,7 @@ var CreatePost = React.createClass({
       subjectHeight: 0,
       contentText: '',
       contentHeight: 0,
-      avatarSource:'',
+      imageSource:[],
     };
   },
 
@@ -71,15 +72,17 @@ var CreatePost = React.createClass({
       }
       else {
         // You can display the image using either data:
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+        const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
 
-        // // uri (on iOS)
-        // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
         // uri (on android)
-        const source = {uri: response.uri, isStatic: true};
+        // const source = {uri: response.uri, isStatic: true};
+
+        var temp = [];
+        temp = this.state.imageSource;
+        temp.push(source);
 
         this.setState({
-          avatarSource: source,
+          imageSource: temp,
         });
       }
     });
@@ -97,68 +100,106 @@ var CreatePost = React.createClass({
   },
 
   send: function(){
-    console.warn(this.state.avatarSource.uri);
+    for (var i = 0; i < this.state.imageSource.length; i++) {
+      console.warn("sdfdf",this.state.imageSource[i].uri);
+    }
+
+    console.warn("subject,",this.state.subjectText);
+    console.warn("content,",this.state.contentText);
+  },
+
+  deleteCurrentImage: function(index){
+    var temp = [];
+    temp = this.state.imageSource;
+    temp.splice(index,1);
+
+    this.setState({
+      imageSource: temp,
+    });
   },
 
   render() {
+
+    if(this.state.imageSource.length < 6){
+      var add = (
+          <TouchableOpacity onPress={this.imagePicker}>
+            <View style={styles.addImage}>
+              <Icon name='add' size={60} color="#e1e1d0"/>
+            </View>
+          </TouchableOpacity>
+        )
+    }
+
+    var rowImages = this.state.imageSource.map(function(image, i){
+      return (
+        <Image 
+          key = {i}
+          source={{uri: image.uri}} 
+          style={{width: (width - 50)/3, height: (width - 50)/3, marginRight: 10, marginTop: 10}} >
+          <TouchableOpacity onPress={(i)=>this.deleteCurrentImage(i)}>
+            <View style={{opacity: 0.8,marginLeft: (width - 50)/3 - 20, backgroundColor: "#eeeeee"}}>
+              <Icon name="clear" size={20} color="#ff3300"/>
+            </View>
+          </TouchableOpacity>
+        </Image>
+      );
+    }.bind(this));
    
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.subject}>
-          <TextInput 
-            multiline={true}
-            onChange={(event) => {
-              this.setState({
-                text: event.nativeEvent.text,
-                height: event.nativeEvent.contentSize.height,
-              });
-            }}
-            placeholder="Subject"
-            underlineColorAndroid='rgba(0,0,0,0)'
-            style={[styles.subject2, {height: Math.max(40, this.state.height)}]}/>
+        <TextInput 
+          value={this.state.text}
+          multiline={true}
+          onChange={(event) => {
+            this.setState({
+              subjectText: event.nativeEvent.text,
+              subjectHeight: event.nativeEvent.contentSize.height,
+            });
+          }}
+          placeholder="Subject"
+          underlineColorAndroid='rgba(0,0,0,0)'
+          style={[styles.subject2, {height: Math.max(40, this.state.subjectHeight)}]}/>
           
-          <View style={{marginTop: 20, marginBottom: 20, height: 2, backgroundColor: '#e1e1d0'}}/>
+        <View style={{marginTop: 20, marginBottom: 20, height: 2, backgroundColor: '#e1e1d0'}}/>
           
-          <TextInput 
-            multiline={true}
-            onChange={(event) => {
-              this.setState({
-                contentText: event.nativeEvent.text,
-                contentHeight: event.nativeEvent.contentSize.height,
-              });
-            }}
-            placeholder="What's on your mind?"
-            underlineColorAndroid='rgba(0,0,0,0)'
-            style={[styles.content, {height: Math.max(40, this.state.contentHeight)}]}/>
+        <TextInput 
+          multiline={true}
+          onChange={(event) => {
+            this.setState({
+              contentText: event.nativeEvent.text,
+              contentHeight: event.nativeEvent.contentSize.height,
+            });
+          }}
+          placeholder="What's on your mind?"
+          underlineColorAndroid='rgba(0,0,0,0)'
+          style={[styles.content, {height: Math.max(40, this.state.contentHeight)}]}/>
 
-            <TouchableOpacity onPress={this.imagePicker}>
-              <View style={styles.images}>
-                <View style={styles.addImage}>
-                  <Icon name='add' size={60} color="#e1e1d0"/>
-                </View>
-                <View style={styles.addImage}>
-                  <Image source={this.state.avatarSource} style={{width: 50, height: 50}} />
-                </View>
-              </View>
-            </TouchableOpacity>
-
-            
-        </View>
+          </View>
+          <View style={styles.images}>
+            {add}
+            {rowImages}
+          </View>
+          
         
-      </View>
+      </ScrollView>
     );
   }
 
 });
 
+ 
+
+ 
+
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     marginTop: 55,
     //垂直居中
     // justifyContent: 'center',
     //水平居中
-    alignItems: 'center',
+    // alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
 
@@ -180,20 +221,51 @@ var styles = StyleSheet.create({
   },
 
   images: {
+    flex:1,
+    flexWrap: 'wrap',
     flexDirection: 'row',
-    marginTop: 10,
+    width: width-20,
+    margin:10,
   },
 
   addImage:{
-    width: (width - 40)/3,
-    height: (width - 40)/3,
+    width: (width - 50)/3,
+    height: (width - 50)/3,
     borderWidth: 1,
     borderColor: '#e1e1d0',
-    borderStyle :'dashed',
+    borderStyle:'dashed',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    marginTop: 10,
   }
 });
 
 module.exports = CreatePost;
+
+// {this.state.imageSource.map(function(item, i) {
+                
+//                 return(
+//                   <View key={i}>
+//                     {
+//                       function(){
+//                         // if(i%3 == 2){
+//                         //   return (
+//                         //     <View style={{marginTop: 10, flexWrap: 'wrap',flexDirection: 'row',}}>
+//                         //       <Image 
+//                         //         source={{uri: item.uri}} 
+//                         //         style={{width: (width - 40)/3, height: (width - 40)/3,}} />
+//                         //     </View>
+//                         //   )
+//                         // }else{
+//                           return (
+//                             <Image 
+//                               source={{uri: item.uri}} 
+//                               style={{width: (width - 40)/3, height: (width - 40)/3,}} />
+//                           )
+//                         // }
+//                         }.bind(this).call()
+//                     }
+//                   </View>
+//                 )
+//                 })}

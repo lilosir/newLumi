@@ -11,6 +11,7 @@ var Friends = require('./friends');
 var SearchFriends = require('./searchFriends');
 var AroundMe = require('./aroundme');
 var Bala = require('./bala');
+var Market = require('./market');
 
 var Notifications = require('./notifications');
 
@@ -150,7 +151,7 @@ var Mycircle = React.createClass({
         renderTabBar={() => <CustomTabbar/>}>
         <Friends tabLabel='whatshot|News'/>
         <AroundMe tabLabel='camera|Around Me'/>
-        <SearchFriends tabLabel='store-mall-directory|LU Market'/>
+        <Market tabLabel='store-mall-directory|LU Market'/>
         <Bala tabLabel='accessibility|Bala'/>
       </ScrollableTabView>
     )        
