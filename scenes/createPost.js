@@ -9,12 +9,14 @@ var {
   Dimensions,
   Image,
   ScrollView,
+  ToastAndroid,
 } = React;
 
 var nav  = require('../NavbarMixin');
 var {height, width} = Dimensions.get('window');
 var {Avatar, List, Subheader, IconToggle, Icon, Button} = require('react-native-material-design');
 var ImagePickerManager = require('NativeModules').ImagePickerManager;
+var PostAPIS = require('../operations/posts');
 
 var CreatePost = React.createClass({
 
@@ -99,13 +101,36 @@ var CreatePost = React.createClass({
 
   },
 
-  send: function(){
-    for (var i = 0; i < this.state.imageSource.length; i++) {
-      console.warn("sdfdf",this.state.imageSource[i].uri);
-    }
+  send: async function(){
+    // for (var i = 0; i < this.state.imageSource.length; i++) {
+    //   console.warn("sdfdf",this.state.imageSource[i].uri);
+    // }
 
-    console.warn("subject,",this.state.subjectText);
-    console.warn("content,",this.state.contentText);
+    // console.warn("subject,",this.state.subjectText);
+    // console.warn("content,",this.state.contentText);
+
+    var temp = this.state.imageSource.map(function(image, i){
+      return image.uri;
+    })
+
+    // console.warn(temp.length)
+    try{
+      var post = await PostAPIS.createPost(global.SESSION.user._id, {body:{
+        category: "publicPost",
+        subject: this.state.subjectText,
+        text: this.state.contentText,
+        image: temp,
+      }});
+
+      // if(post.message == 'send post successfully!'){
+      //   ToastAndroid.show(post.message, ToastAndroid.LONG);
+      // }
+      
+      console.log("post return", post)
+    }catch(e){
+      console.warn(e);
+    }
+    
   },
 
   deleteCurrentImage: function(index){

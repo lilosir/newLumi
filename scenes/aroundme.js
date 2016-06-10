@@ -11,6 +11,7 @@ var TimerMixin = require('react-timer-mixin');
 var GCM = require('../gcmdata');
 var apis = require('../apis');
 var Spinner = require('react-native-spinkit');
+var PostAPIS = require('../operations/posts');
 
 var {
 	View,
@@ -46,12 +47,14 @@ var AroundMe = React.createClass({
 
 	componentDidMount: async function() {
 
-		// this.setTimeout(()=>{
-	 //      this.fetchRecent();
-	 //    }, 500);   
-		this.setState({
-			news: this.getInitialNews()
-		});
+		this.setTimeout(()=>{
+	      	this.getInitialNews();
+	    }, 500);   
+
+	    // this.setState({
+	    // 	news: this.getInitialNews(),
+	    // });
+		
 
 		Animated.timing(
 			this.state.create_animation,
@@ -71,50 +74,78 @@ var AroundMe = React.createClass({
 
 	},
 
-	getInitialNews: function(){
+	getInitialNews: async function(){
 
-		return [
-			{
-				subject:'This is the 1 post',
-				reply: 20,
-				like: 12,
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "Daibi",
-				image: apis.BASE_URL + '/' + 'images/react.png',
-			},
-			{
-				subject:'This is the 2 post',
-				reply: 320,
-				like: 120,
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "Niubi",
-				image: apis.BASE_URL + '/' + 'images/react.png',
-			},
-			{
-				subject:'This is the 3 post',
-				reply: 20,
-				like: 12,
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "Daibi",
-				image: apis.BASE_URL + '/' + 'images/react.png',
-			},
-			{
-				subject:'This is the 4 post',
-				reply: 320,
-				like: 120,
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "Niubi",
-				image: apis.BASE_URL + '/' + 'images/react.png',
-			},
-			{
-				subject:'This is the 5 post',
-				reply: 20,
-				like: 12,
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "Daibi",
-				image: apis.BASE_URL + '/' + 'images/react.png',
-			},
-		];
+		try{
+			var posts = await PostAPIS.getPosts({
+				query:{
+					category:'publicPost',
+					direction: 'older',
+					date: new Date(),
+				}})
+
+			var data = posts.map(function(item, i){
+		      return {
+		        subject: item.body.subject, 
+		        reply: item.comments.length,
+		        like:item.like,
+		        avatar: apis.BASE_URL+"/"+item.user.avatar,
+		        nickname: item.user.nickname,
+		        image: item.body.image[0].uri,
+		      }
+		    })
+
+		    this.setState({
+				news: data,
+			});
+
+		}catch(e){
+			console.warn(e);
+		}
+
+
+		// return [
+		// 	{
+		// 		subject:'This is the 1 post',
+		// 		reply: 20,
+		// 		like: 12,
+		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
+		// 		nickname: "Daibi",
+		// 		image: apis.BASE_URL + '/' + 'images/react.png',
+		// 	},
+		// 	{
+		// 		subject:'This is the 2 post',
+		// 		reply: 320,
+		// 		like: 120,
+		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
+		// 		nickname: "Niubi",
+		// 		image: apis.BASE_URL + '/' + 'images/react.png',
+		// 	},
+		// 	{
+		// 		subject:'This is the 3 post',
+		// 		reply: 20,
+		// 		like: 12,
+		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
+		// 		nickname: "Daibi",
+		// 		image: apis.BASE_URL + '/' + 'images/react.png',
+		// 	},
+		// 	{
+		// 		subject:'This is the 4 post',
+		// 		reply: 320,
+		// 		like: 120,
+		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
+		// 		nickname: "Niubi",
+		// 		image: apis.BASE_URL + '/' + 'images/react.png',
+		// 	},
+		// 	{
+		// 		subject:'This is the 5 post',
+		// 		reply: 20,
+		// 		like: 12,
+		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
+		// 		nickname: "Daibi",
+		// 		image: apis.BASE_URL + '/' + 'images/react.png',
+		// 	},
+		// ];
 
 	},
 

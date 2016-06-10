@@ -8,6 +8,12 @@ var Posts = {
     }, params));
   },
 
+  getPosts: function(params){
+    return apis.asyncFetch(apis.BASE_URL + '/posts/getPosts', Object.assign({
+      method: 'GET'
+    }, params));
+  },
+
 }
 
 module.exports = Posts;
