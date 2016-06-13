@@ -42,6 +42,9 @@ var AroundMe = React.createClass({
 			isRefreshing: false,
 			news: [],
 			isLoadingOld: false,
+			loading: true,
+			latest: new Date(),
+			oldest: new Date(),
 		};
 	},
 
@@ -49,29 +52,24 @@ var AroundMe = React.createClass({
 
 		this.setTimeout(()=>{
 	      	this.getInitialNews();
-	    }, 500);   
 
-	    // this.setState({
-	    // 	news: this.getInitialNews(),
-	    // });
-		
+	      	Animated.timing(
+				this.state.create_animation,
+				{
+					toValue: 100,
+					duration: 1000,
+				}
+			).start();
 
-		Animated.timing(
-			this.state.create_animation,
-			{
-				toValue: 100,
-				duration: 1000,
-			}
-		).start();
+			Animated.timing(
+				this.state.animateValueY,
+				{
+					toValue: createTop - height ,
+					duration: 1000,
+				}
+			).start();
 
-		Animated.timing(
-			this.state.animateValueY,
-			{
-				toValue: createTop - height ,
-				duration: 1000,
-			}
-		).start();
-
+	    }, 2000); 
 	},
 
 	getInitialNews: async function(){
@@ -84,123 +82,132 @@ var AroundMe = React.createClass({
 					date: new Date(),
 				}})
 
-			var data = posts.map(function(item, i){
-		      return {
-		        subject: item.body.subject, 
-		        reply: item.comments.length,
-		        like:item.like,
-		        avatar: apis.BASE_URL+"/"+item.user.avatar,
-		        nickname: item.user.nickname,
-		        image: item.body.image[0].uri,
-		      }
-		    })
+			if(posts.length > 0){
 
+				var data = posts.map(function(item, i){
+					var img;
+					if(item.body.image.length != 0){
+						img = item.body.image[0].uri;
+					}
+
+				    return {
+				      	id: item._id,
+				      	updated_at: item.updated_at,
+				        subject: item.body.subject, 
+				        reply: item.comments.length,
+				        avatar: apis.BASE_URL+"/"+item.user.avatar,
+				        nickname: item.user.nickname,
+				        image: img,
+				    }
+			    })
+
+			    this.setState({
+					news: data,
+					loading: false,
+					oldest: data[data.length - 1].updated_at,
+					latest: data[0].updated_at,
+				});
+
+			}
 		    this.setState({
-				news: data,
+				loading: false,
 			});
 
 		}catch(e){
 			console.warn(e);
 		}
-
-
-		// return [
-		// 	{
-		// 		subject:'This is the 1 post',
-		// 		reply: 20,
-		// 		like: 12,
-		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-		// 		nickname: "Daibi",
-		// 		image: apis.BASE_URL + '/' + 'images/react.png',
-		// 	},
-		// 	{
-		// 		subject:'This is the 2 post',
-		// 		reply: 320,
-		// 		like: 120,
-		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-		// 		nickname: "Niubi",
-		// 		image: apis.BASE_URL + '/' + 'images/react.png',
-		// 	},
-		// 	{
-		// 		subject:'This is the 3 post',
-		// 		reply: 20,
-		// 		like: 12,
-		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-		// 		nickname: "Daibi",
-		// 		image: apis.BASE_URL + '/' + 'images/react.png',
-		// 	},
-		// 	{
-		// 		subject:'This is the 4 post',
-		// 		reply: 320,
-		// 		like: 120,
-		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-		// 		nickname: "Niubi",
-		// 		image: apis.BASE_URL + '/' + 'images/react.png',
-		// 	},
-		// 	{
-		// 		subject:'This is the 5 post',
-		// 		reply: 20,
-		// 		like: 12,
-		// 		avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-		// 		nickname: "Daibi",
-		// 		image: apis.BASE_URL + '/' + 'images/react.png',
-		// 	},
-		// ];
-
 	},
 
-	_goThisPost: function(item){
-		Actions.aroundmepost();
+	_goThisPost: function(id){
+		Actions.aroundmepost({id: id});
+	},
+
+	_getNew: async function(){
+		var posts = await PostAPIS.getPosts({
+				query:{
+					category:'publicPost',
+					direction: 'newer',
+					date: this.state.latest,
+				}})
+
+		if(posts.length > 0){
+			var data = posts.map(function(item, i){
+				var img;
+				if(item.body.image.length != 0){
+					img = item.body.image[0].uri;
+				}
+
+			    return {
+			      	id: item._id,
+			      	updated_at: item.updated_at,
+			        subject: item.body.subject, 
+			        reply: item.comments.length,
+			        avatar: apis.BASE_URL+"/"+item.user.avatar,
+			        nickname: item.user.nickname,
+			        image: img,
+			    }
+		    })
+
+		    this.setState({
+				latest: data[0].updated_at,
+				news: data.concat(this.state.news),
+			});
+		}
+
 	},
 
 	_onRefresh() {
 	    this.setState({isRefreshing: true});
-	    setTimeout(() => {
-
-	    	var newPost = [
-	    		{
-					subject:'New one',
-					reply: 310,
-					like: 212,
-					avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-					nickname: "X!!!!!",
-					image: apis.BASE_URL + '/' + 'images/react.png',
-				},
-	    	]
-
-	    	this.setState({
-	    		news: newPost.concat(this.state.news),
-	    	});
-
+	    this.setTimeout(() => {
+	    	this._getNew();
+	
 			this.setState({isRefreshing: false});
-	    }, 3000);
+	    }, 1000);
+
 	},
 
-	_getOld: function(){
+	olds: async function(){
 
-		setTimeout(() => {
+		var posts = await PostAPIS.getPosts({
+					query:{
+						category:'publicPost',
+						direction: 'older',
+						date: this.state.oldest,
+					}})
 
-	    	var oldPost = [
-	    		{
-					subject:'very old one',
-					reply: '32K',
-					like: '12K',
-					avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-					nickname: "PIS",
-					image: apis.BASE_URL + '/' + 'images/react.png',
-				},
-	    	]
+		if(posts.length > 0){
+			var data = posts.map(function(item, i){
+				var img;
+				if(item.body.image.length != 0){
+					img = item.body.image[0].uri;
+				}
 
-	    	this.setState({
-	    		news: this.state.news.concat(oldPost),
-	    	});
+			    return {
+			      	id: item._id,
+			      	updated_at: item.updated_at,
+			        subject: item.body.subject, 
+			        reply: item.comments.length,
+			        avatar: apis.BASE_URL+"/"+item.user.avatar,
+			        nickname: item.user.nickname,
+			        image: img,
+			    }
+		    })
 
-			this.setState({isRefreshing: false});
-
-			this.setState({
-				isLoadingOld: false, 
+		    this.setState({
+				oldest: data[data.length - 1].updated_at,
+				news: this.state.news.concat(data),
 			});
+		}
 
+		this.setState({
+			isLoadingOld: false, 
+		});
+	},
+
+	_getOld:async function(){
+
+		this.setTimeout(() => {
+			this.olds();
 	    }, 3000);
 	    
 	},
@@ -235,6 +242,12 @@ var AroundMe = React.createClass({
 				      	</View>
 	    }
 
+	    if(this.state.loading){
+	      return (
+	        <Loading/>
+	      )
+	    }
+
 		return (
 			<View style={{flex:1}}>
 			<ScrollView 
@@ -250,7 +263,7 @@ var AroundMe = React.createClass({
 
 		        {this.state.news.map((item,i)=>(
 		        <View style={{marginTop:5, marginBottom:5}} key={i}>
-		        	<TouchableOpacity onPress={()=> this._goThisPost(item)} >
+		        	<TouchableOpacity onPress={()=> this._goThisPost(item.id)} >
 		        		<View style={styles.listView}>
 				        	<View style={styles.icons}>
 				        		<Icon name={"sms"} color="#ff531a" size={20}/>
@@ -354,12 +367,6 @@ var styles = StyleSheet.create({
   	flex: 1,
   	alignItems: 'center',
   	marginTop: 15,
-  },
-
-  like: {
-  	flex: 1,
-  	alignItems: 'center',
-  	marginBottom: 15,
   },
 
   reply: {

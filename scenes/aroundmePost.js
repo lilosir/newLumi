@@ -6,6 +6,7 @@ var {Actions} = require('react-native-router-flux');
 var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
 var apis = require('../apis');
 var UserAPIS = require('../operations/users');
+var PostAPIS = require('../operations/posts');
 
 var {
 	View,
@@ -14,6 +15,7 @@ var {
 	Image,
 	Dimensions,
 	ScrollView,
+	TouchableOpacity,
 } = React;
 
 var {height, width} = Dimensions.get('window');
@@ -41,18 +43,34 @@ var AroundMePost = React.createClass({
 
 	    this.setTitleView(" ");
 
-	    this.setState({
-			subject:'This is the 1 post, I feel really good!!!I feel really good!!!I feel really good!!!',
-			contents: 'Likewise, Android also supports custom extensions, the methods are just slightly different. \n\nTo create a simple module in Android, create a new class that extends the ReactContextBaseJavaModule class, and annotate the function that you want to make available to JavaScript with @ReactMethod. Additionally, the class itself must be registered in the ReactPackage of your React Native application.',
-			nickname: "Daibi",
-			avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-			image: apis.BASE_URL + '/' + 'images/react.png',
-		});
+		this.getThisPost();
 
-		this.setState({
-			comments: this.getInitialComments(),
-		});
+	},
 
+	getThisPost: async function(){
+
+		try{
+			var post = await PostAPIS.getPosts({query:{id: this.props.id}});
+
+			var img;
+			if(post.body.image.length != 0){
+				img = post.body.image[0].uri;
+			}
+
+			this.setState({
+				subject: post.body.subject,
+				contents: post.body.text,
+				nickname: post.user.nickname,
+				avatar: apis.BASE_URL + '/' + post.user.avatar,
+				image: img,
+				comments: post.comments,
+			});
+
+
+		}catch(e){
+			console.warn(e)
+		}
+		
 	},
 
 	getInitialComments: function(){
@@ -107,9 +125,11 @@ var AroundMePost = React.createClass({
 		    		<View style={{marginRight: 40}}>
 		    			<Icon size={20} name="thumb-up"/>
 		    		</View>
-		    		<View style={{marginRight: 20}}>
-		    			<Icon size={20} name="textsms"/>
-		    		</View>
+		    		<TouchableOpacity onPress={}>
+			    		<View style={{marginRight: 20}}>
+			    			<Icon size={20} name="textsms"/>
+			    		</View>
+			    	</TouchableOpacity>
 		    	</View>
 
 		    	<View style={styles.commentsText}>

@@ -14,6 +14,12 @@ var Posts = {
     }, params));
   },
 
+  likeOrDislike: function(id, params){
+    return apis.asyncFetch(apis.BASE_URL + '/posts/likeOrDislike/' + id, Object.assign({
+      method: 'POST'
+    }, params));
+  }
+
 }
 
 module.exports = Posts;

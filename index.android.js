@@ -15,6 +15,7 @@ var Notifications = require('./scenes/notifications');
 var Mycircle = require('./scenes/mycircle');
 var AroundMePost = require('./scenes/aroundmePost');
 var CreatePost = require('./scenes/createPost');
+var CreateBala = require('./scenes/createBala');
 
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
@@ -176,6 +177,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="mycircle" component={Mycircle}  title="My Circle"/>
             <Route name="aroundmepost" component={AroundMePost}  title="aroundmepost" schema="modal"/>
             <Route name="createpost" component={CreatePost} title="New Post" schema="modal"/>
+            <Route name="createbala" component={CreateBala} title="New Bala" schema="modal"/>
           </Router>
         </DrawerLayoutAndroid>
         

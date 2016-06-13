@@ -17,6 +17,7 @@ var {height, width} = Dimensions.get('window');
 var {Avatar, List, Subheader, IconToggle, Icon, Button} = require('react-native-material-design');
 var ImagePickerManager = require('NativeModules').ImagePickerManager;
 var PostAPIS = require('../operations/posts');
+var {Actions} = require('react-native-router-flux');
 
 var CreatePost = React.createClass({
 
@@ -59,6 +60,7 @@ var CreatePost = React.createClass({
         path: 'images' // ios only - will save image at /Documents/images rather than the root
       }
     };
+
 
     ImagePickerManager.showImagePicker(options, (response) => {
       console.log('Response = ', response);
@@ -125,8 +127,13 @@ var CreatePost = React.createClass({
       // if(post.message == 'send post successfully!'){
       //   ToastAndroid.show(post.message, ToastAndroid.LONG);
       // }
+      if(!post.message){
+        ToastAndroid.show('send post successfully!', ToastAndroid.SHORT);
+
+        Actions.mycircle({initialPage: 1});
+      }
       
-      console.log("post return", post)
+      // console.log("post return", post)
     }catch(e){
       console.warn(e);
     }
