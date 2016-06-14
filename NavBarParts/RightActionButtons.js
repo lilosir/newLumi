@@ -124,11 +124,12 @@ var styles = StyleSheet.create({
 	barButtonIcon: {
 	    color: "#f4cb0d",
 	    fontSize: 22,
-	    margin: 12,
+	    margin: 10,
 	},
 	barButtonText: {
 	    color: "#f4cb0d",
-	    fontSize: 17
+	    fontSize: 17,
+	    margin: 9,
 	}
 });
 

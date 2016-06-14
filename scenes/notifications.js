@@ -68,7 +68,7 @@ var Notifications = React.createClass({
                     <View style={styles.add}>
                       <Text style={styles.addText}> Add </Text>
                     </View>
-                  </TouchableOpacity>
+                </TouchableOpacity>
                 )
             }
           }else{

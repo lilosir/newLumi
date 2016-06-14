@@ -16,9 +16,15 @@ var {
 	Dimensions,
 	ScrollView,
 	TouchableOpacity,
+	TextInput,
+	DeviceEventEmitter,
+	showInput,
+	ToastAndroid
 } = React;
 
 var {height, width} = Dimensions.get('window');
+var Left = width - 40;
+var Top = height - 110;
 
 var AroundMePost = React.createClass({
 
@@ -32,6 +38,10 @@ var AroundMePost = React.createClass({
 			avatar: null,
 			image: null,
 			comments:[],
+			visibleHeight: height,	
+			showInput: false,
+			myComment:'',
+			mycommentHeight: 30,
 		};
 	},
 
@@ -47,6 +57,7 @@ var AroundMePost = React.createClass({
 
 	},
 
+
 	getThisPost: async function(){
 
 		try{
@@ -57,13 +68,25 @@ var AroundMePost = React.createClass({
 				img = post.body.image[0].uri;
 			}
 
+			var comments = [];
+			if(post.comments.length > 0){
+				comments = post.comments.map(function(item,i){
+					return {
+						avatar: apis.BASE_URL + '/' + item.by.avatar,
+						nickname: item.by.nickname,
+						text:item.content,
+					}
+				})
+			}
+
 			this.setState({
 				subject: post.body.subject,
 				contents: post.body.text,
 				nickname: post.user.nickname,
 				avatar: apis.BASE_URL + '/' + post.user.avatar,
 				image: img,
-				comments: post.comments,
+				comments: comments,
+				// comments: this.getIComments(),
 			});
 
 
@@ -73,7 +96,7 @@ var AroundMePost = React.createClass({
 		
 	},
 
-	getInitialComments: function(){
+	getIComments: function(){
 		return [
 			{	
 				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
@@ -98,9 +121,107 @@ var AroundMePost = React.createClass({
 		];
 	},
 
+	goComment: function(){
+		if(this.state.showInput){
+			this.setState({
+				showInput: false,
+			});
+		}else{
+			this.setState({
+				showInput: true,
+			});
+			if(this.state.showInput){
+				this.refs.comments.focus();
+			}
+		}
+	},
+
+	submitComment:async function(id){
+
+		try{
+			var comment = await PostAPIS.submitComment(global.SESSION.user._id, {
+				body:{
+					postId: id,
+					comment: this.state.myComment,
+				}
+			})
+
+			if(comment.message == 'comment successfully'){
+				ToastAndroid.show('send post successfully!', ToastAndroid.SHORT);
+			}
+
+			this.getThisPost();
+			this.refs.comments.clear();
+			this.setState({
+				showInput: false,
+			});
+			this.scrollTo("bottom");
+			
+		}catch(e){
+			console.warn(e)
+		}
+	},
+
+	scrollTo: function(position){
+		let innerScrollView = this._scrollView.refs.InnerScrollView;
+        let scrollView = this._scrollView.refs.ScrollView;
+
+        requestAnimationFrame(() => {
+            innerScrollView.measure((innerScrollViewX, innerScrollViewY, innerScrollViewWidth, innerScrollViewHeight) => {
+                scrollView.measure((scrollViewX, scrollViewY, scrollViewWidth, scrollViewHeight) => {
+                    var scrollTo = innerScrollViewHeight - scrollViewHeight + innerScrollViewY;
+
+                    if (innerScrollViewHeight < scrollViewHeight) {
+                        return;
+                    }
+                    if(position == 'bottom')
+                    // scroll to bottom
+                    this._scrollView.scrollTo({y:scrollTo});
+
+                    if(position == 'top')
+                    // scroll to top
+                    this._scrollView.scrollTo({y:0});
+                });
+            });
+        });
+	},
+
 	render: function() {
+		var showInput;
+		if(this.state.showInput){
+			showInput = (
+				<View style={{
+					backgroundColor: "#e6e6ff", 
+					flexDirection: 'row',
+					alignItems:'flex-end',}}>
+					<View style={{flex:4, backgroundColor:"#ffffff",
+								  margin:10,borderRadius:1}}>
+						<TextInput 
+							multiline={true}
+							ref="comments"
+							underlineColorAndroid='rgba(0,0,0,0)'
+							keyboardType='numbers-and-punctuation'
+							onChange={(event) => {
+							            this.setState({
+							              myComment: event.nativeEvent.text,
+							              mycommentHeight: event.nativeEvent.contentSize.height,
+							            });
+							          }}
+							style={{padding: 4, fontSize: 18, height: Math.min(70, this.state.mycommentHeight)}}/>
+					</View>
+					<TouchableOpacity onPress={()=> (this.submitComment(this.props.id))}>
+	                    <View style={styles.reply}>
+	                      <Text style={styles.replyText}> Reply </Text>
+	                    </View>
+	                </TouchableOpacity>
+				</View>
+				)
+		}
 		return (
-			<ScrollView style={styles.container}>
+			<View style={{flex:1}}>
+			<ScrollView 
+				ref={(component) => this._scrollView = component}
+				style={styles.container}>
 				<View style={styles.title}>
 					<Text style={styles.titleText}> {this.state.subject} </Text>
 				</View>
@@ -125,7 +246,7 @@ var AroundMePost = React.createClass({
 		    		<View style={{marginRight: 40}}>
 		    			<Icon size={20} name="thumb-up"/>
 		    		</View>
-		    		<TouchableOpacity onPress={}>
+		    		<TouchableOpacity onPress={this.goComment}>
 			    		<View style={{marginRight: 20}}>
 			    			<Icon size={20} name="textsms"/>
 			    		</View>
@@ -134,7 +255,7 @@ var AroundMePost = React.createClass({
 
 		    	<View style={styles.commentsText}>
 		    		<View style={{marginLeft: 10}}>
-			    		<Text style={{color: 'black', fontSize: 16}}> 122 comments </Text>
+			    		<Text style={{color: 'black', fontSize: 16}}> {this.state.comments.length} comments </Text>
 			    	</View>
 		    	</View>
 
@@ -153,7 +274,18 @@ var AroundMePost = React.createClass({
 		        	</View>
 		        </View>			
 		        ))}
+		        
 			</ScrollView>
+			{showInput}
+			<View style={styles.goUp}>
+			<TouchableOpacity onPress={()=>this.scrollTo('top')}>
+				<View style={{flex:1}}>
+					<Icon name="publish" color="#f4cb0d"/>
+				</View>
+			</TouchableOpacity>
+			</View>
+			</View>
+		
 		);
 	}
 
@@ -163,6 +295,19 @@ var styles = StyleSheet.create({
 	container:{
 		marginTop: 55,
 		backgroundColor: '#f5f5ef'
+	},
+
+	goUp: {
+	  	position: 'absolute',
+	  	width: 30,
+	    height: 30,
+	    backgroundColor: '#00437a',
+	    justifyContent: 'center', 
+	  	alignItems: 'center',
+	  	alignSelf: 'center',
+	    opacity: 0.8,
+	    left: Left,
+	    top: Top,
 	},
 
 	title: {
@@ -216,6 +361,23 @@ var styles = StyleSheet.create({
 		borderBottomWidth:2,
 	    borderBottomColor: "#eeeeee",
   	},
+
+  	reply: {
+	    flex: 1,
+	    borderRadius: 5,
+	    backgroundColor: '#008ae6',
+	    alignItems : 'center',
+	    justifyContent: 'center',
+	    width: 40,
+	    height: 30,
+	    marginRight: 10,
+	    marginBottom:10,
+	},
+
+    replyText: {
+	    color: "white",
+	    fontSize: 14,
+	},
 
 });
 

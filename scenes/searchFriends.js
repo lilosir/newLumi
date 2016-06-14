@@ -89,9 +89,9 @@ var searchFriends = React.createClass({
 						<TextInput
 						    style={styles.textInput}
 						    onChangeText={this.changeText}
-						    value={this.state.text}			    
-						    placeholder={"Search for users..."}
-						    underlineColorAndroid={"#ffffff"}/>
+						    value={this.state.text}		
+						    underlineColorAndroid='rgba(0,0,0,0)'	    
+						    placeholder={"Search for users..."}/>
 					</View>
 				</View>
 					<ScrollView 
@@ -137,9 +137,10 @@ var styles = StyleSheet.create({
 
 	textInput: {
 		height: 40, 
-		// fontSize: 30,
+		fontSize: 18,
 		// borderColor: '#ffffff', 
-		borderWidth: 1,
+		padding: 4,
+		borderWidth: 0,
 	},
 });
 

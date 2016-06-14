@@ -18,7 +18,13 @@ var Posts = {
     return apis.asyncFetch(apis.BASE_URL + '/posts/likeOrDislike/' + id, Object.assign({
       method: 'POST'
     }, params));
-  }
+  },
+
+  submitComment: function(id, params){
+    return apis.asyncFetch(apis.BASE_URL + '/posts/submitComment/' + id, Object.assign({
+      method: 'POST'
+    }, params));
+  },
 
 }
 
