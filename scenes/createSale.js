@@ -19,16 +19,16 @@ var ImagePickerManager = require('NativeModules').ImagePickerManager;
 var PostAPIS = require('../operations/posts');
 var {Actions} = require('react-native-router-flux');
 
-var CreatePost = React.createClass({
+var createSale = React.createClass({
 
   mixins: [nav],
 
   getInitialState: function() {
     return {
-      subjectText: '',
-      subjectHeight: 0,
       contentText: '',
-      contentHeight: 0,
+      contentHeight: 50,
+      original:0,
+      current:0,
       imageSource:[],
     };
   },
@@ -108,8 +108,8 @@ var CreatePost = React.createClass({
     //   console.warn("sdfdf",this.state.imageSource[i].uri);
     // }
 
-    // console.warn("subject,",this.state.subjectText);
-    // console.warn("content,",this.state.contentText);
+    // console.warn("original,",this.state.original);
+    // console.warn("current,",this.state.current);
 
     var temp = this.state.imageSource.map(function(image, i){
       return image.uri;
@@ -118,12 +118,12 @@ var CreatePost = React.createClass({
     // console.warn(temp.length)
     try{
       var post = await PostAPIS.createPost(global.SESSION.user._id, {body:{
-        category: "publicPost",
-        subject: this.state.subjectText,
+        category: "market",
         text: this.state.contentText,
+        current: this.state.current,
+        original: this.state.original,
         image: temp,
-        current: 0,
-        original: 0,
+        subject: "",
       }});
 
       // if(post.message == 'send post successfully!'){
@@ -132,7 +132,7 @@ var CreatePost = React.createClass({
       if(!post.message){
         ToastAndroid.show('send post successfully!', ToastAndroid.SHORT);
 
-        Actions.mycircle({initialPage: 1});
+        Actions.mycircle({initialPage: 2});
       }
       
       // console.log("post return", post)
@@ -181,22 +181,14 @@ var CreatePost = React.createClass({
    
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.subject}>
-        <TextInput 
-          value={this.state.text}
-          multiline={true}
-          onChange={(event) => {
-            this.setState({
-              subjectText: event.nativeEvent.text,
-              subjectHeight: event.nativeEvent.contentSize.height,
-            });
-          }}
-          placeholder="Subject"
-          underlineColorAndroid='rgba(0,0,0,0)'
-          style={[styles.subject2, {height: Math.max(40, this.state.subjectHeight)}]}/>
-          
-        <View style={{marginTop: 20, marginBottom: 20, height: 2, backgroundColor: '#e1e1d0'}}/>
-          
+      	<View style={{backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#eeeeee',}}>
+      	<View style={styles.images}>
+            {add}
+            {rowImages}
+        </View>
+        </View>
+         
+        <View style={styles.details}>
         <TextInput 
           multiline={true}
           onChange={(event) => {
@@ -205,17 +197,35 @@ var CreatePost = React.createClass({
               contentHeight: event.nativeEvent.contentSize.height,
             });
           }}
-          placeholder="What's on your mind?"
+          placeholder="Describing will be more attractive"
           underlineColorAndroid='rgba(0,0,0,0)'
-          style={[styles.content, {height: Math.max(40, this.state.contentHeight)}]}/>
+          style={[styles.content,{height: Math.min(180, this.state.contentHeight)}]}/>
+		</View>
 
-          </View>
-          <View style={styles.images}>
-            {add}
-            {rowImages}
-          </View>
-          
-        
+		
+		<View style={styles.price1}>
+			<Text style={styles.name}> CURRENT PRICE </Text>
+			<TextInput 
+				keyboardType='number-pad'
+				returnKeyType='done'
+				underlineColorAndroid='rgba(0,0,0,0)'
+				onChangeText={(current)=> this.setState({
+					current: current,
+				})}
+				style={styles.input}/>
+		</View>
+		<View style={styles.price2}>
+			<Text style={styles.name}> ORIGINAL PRICE </Text>
+			<TextInput 
+				keyboardType='number-pad'
+				returnKeyType='done'
+				underlineColorAndroid='rgba(0,0,0,0)'
+				onChangeText={(original)=> this.setState({
+					original: original,
+				})}
+				style={styles.input}/>
+		</View>
+
       </ScrollView>
     );
   }
@@ -237,29 +247,67 @@ var styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
 
-  subject:{
-    margin: 10,
-  },
-
-  subject2: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: 'bold',
-    padding: 4,
+  details: {
+  	borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee',
+    borderTopWidth: 1,
+    borderTopColor: '#eeeeee',
+  	backgroundColor: "white",
+  	marginTop: 20,
+  	height: 200,
   },
 
   content: {
-    flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     padding: 4,
+    margin:10,
+    color: "#123123"
+  },
+
+  price1: {
+  	borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee',
+    borderTopWidth: 1,
+    borderTopColor: '#eeeeee',
+  	backgroundColor: "white",
+  	marginTop: 20,
+  	height: 40,
+  	alignItems: 'center',
+  	flexDirection: 'row',
+  },
+
+  price2: {
+  	borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee',
+    backgroundColor: "white",
+  	height: 40,
+  	alignItems: 'center',
+  	flexDirection: 'row',
+  },
+
+  name: {
+  	flex: 2,
+  	fontSize: 16,
+  	marginLeft: 10,
+  },
+
+  input: {
+  	flex: 3,
+  	fontSize: 16,
+    padding: 4,
+  	marginLeft: 20,
+  	marginRight: 10,
+  	// width: 100,
+  	// height: 30,
   },
 
   images: {
     flex:1,
     flexWrap: 'wrap',
     flexDirection: 'row',
-    width: width-20,
-    margin:10,
+   
+    backgroundColor: 'white',
+    margin: 10,
   },
 
   addImage:{
@@ -275,4 +323,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = CreatePost;
+module.exports = createSale;

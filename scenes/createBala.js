@@ -45,6 +45,8 @@ var CreateBala = React.createClass({
         subject: "",
         text: this.state.contentText,
         image: [],
+        current: 0,
+        original: 0,
       }});
 
       // if(post.message == 'send post successfully!'){

@@ -16,7 +16,7 @@ var Mycircle = require('./scenes/mycircle');
 var AroundMePost = require('./scenes/aroundmePost');
 var CreatePost = require('./scenes/createPost');
 var CreateBala = require('./scenes/createBala');
-
+var CreateSale = require('./scenes/createSale');
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
 
@@ -166,7 +166,7 @@ if (GcmAndroid.launchNotification) {
 
               titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-            <Route name="login" component={Login} title="login"  initial={true} schema="modal"/>
+            <Route name="login" component={Login} title="login" initial={true} schema="modal"/>
             <Route name="createAccount" component={CreateAccount} title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
             <Route name="chats" component={Chats}  title="Chats"/>
@@ -178,6 +178,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="aroundmepost" component={AroundMePost}  title="aroundmepost" schema="modal"/>
             <Route name="createpost" component={CreatePost} title="New Post" schema="modal"/>
             <Route name="createbala" component={CreateBala} title="New Bala" schema="modal"/>
+            <Route name="createsale" component={CreateSale} title="New Sale" schema="modal"/>
           </Router>
         </DrawerLayoutAndroid>
         

@@ -112,7 +112,7 @@ var Login = React.createClass({
         }      
 
         // Actions.contacts({initialPage: 0});
-        Actions.mycircle({initialPage: 1});
+        Actions.mycircle({initialPage: 2});
       }catch(e){
         console.warn("login action error:", e.message);
       }   
