@@ -87,7 +87,7 @@ var AroundMe = React.createClass({
 				var data = posts.map(function(item, i){
 					var img;
 					if(item.body.image.length != 0){
-						img = item.body.image[0].uri;
+						img = item.body.image[0];
 					}
 
 				    return {
@@ -134,7 +134,7 @@ var AroundMe = React.createClass({
 			var data = posts.map(function(item, i){
 				var img;
 				if(item.body.image.length != 0){
-					img = item.body.image[0].uri;
+					img = item.body.image[0];
 				}
 
 			    return {
@@ -179,7 +179,7 @@ var AroundMe = React.createClass({
 			var data = posts.map(function(item, i){
 				var img;
 				if(item.body.image.length != 0){
-					img = item.body.image[0].uri;
+					img = item.body.image[0];
 				}
 
 			    return {
@@ -275,7 +275,7 @@ var AroundMe = React.createClass({
 					        			<Text style={styles.subjectText}> {item.subject} </Text>
 					        		</View>
 					        		<View style={styles.image}>
-					        			<Image style={{width: 50, height: 50}} source={{ uri: item.image }}/>
+					        			<Image style={{width: 50, height: 50}} source={item.image}/>
 					        		</View>
 				        		</View>
 				        		<View style={styles.avatarAndNickname}>

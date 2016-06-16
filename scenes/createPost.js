@@ -230,9 +230,9 @@ var styles = StyleSheet.create({
   container: {
     // flex: 1,
     marginTop: 55,
-    //垂直居中
-    // justifyContent: 'center',
     //水平居中
+    // justifyContent: 'center',
+    //垂直居中
     // alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },

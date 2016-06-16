@@ -193,7 +193,7 @@ var styles = StyleSheet.create({
 	nextFetures:{
 		color: "#00437a",
 		fontSize: 16,
-		textAlign:'right',
+		textAlign:'right', 
 	},
 
 	nextFetures2:{

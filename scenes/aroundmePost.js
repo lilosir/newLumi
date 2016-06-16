@@ -36,12 +36,15 @@ var AroundMePost = React.createClass({
 			contents: null,
 			nickname: null,
 			avatar: null,
-			image: null,
+			image: [],
+			current: null,
+			origin: null,
 			comments:[],
 			visibleHeight: height,	
 			showInput: false,
 			myComment:'',
 			mycommentHeight: 30,
+			category: "",
 		};
 	},
 
@@ -65,7 +68,7 @@ var AroundMePost = React.createClass({
 
 			var img;
 			if(post.body.image.length != 0){
-				img = post.body.image[0].uri;
+				img = post.body.image;
 			}
 
 			var comments = [];
@@ -83,10 +86,12 @@ var AroundMePost = React.createClass({
 				subject: post.body.subject,
 				contents: post.body.text,
 				nickname: post.user.nickname,
+				current: post.body.current,
+				origin: post.body.current,
 				avatar: apis.BASE_URL + '/' + post.user.avatar,
 				image: img,
 				comments: comments,
-				// comments: this.getIComments(),
+				category: post.category,
 			});
 
 
@@ -94,31 +99,6 @@ var AroundMePost = React.createClass({
 			console.warn(e)
 		}
 		
-	},
-
-	getIComments: function(){
-		return [
-			{	
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "kk",
-				text:'good!',
-			},
-			{	
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "12312",
-				text:'wow!',
-			},
-			{	
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "OL",
-				text:'goodsdfsdfttttttttttiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisdfsdfttttttttttiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii',
-			},
-			{	
-				avatar: apis.BASE_URL + '/' + 'images/default_avatar.png',
-				nickname: "123",
-				text:'sdfsdfttttttttttiiiiiiiiiiiiiiiiiiii!',
-			},
-		];
 	},
 
 	goComment: function(){
@@ -187,7 +167,7 @@ var AroundMePost = React.createClass({
 	},
 
 	render: function() {
-		var showInput;
+		var showInput, subject, price, images;
 		if(this.state.showInput){
 			showInput = (
 				<View style={{
@@ -217,14 +197,42 @@ var AroundMePost = React.createClass({
 				</View>
 				)
 		}
+
+		if(this.state.category == 'publicPost'){
+			subject = (
+				<View style={styles.title}>
+					<Text style={styles.titleText}> {this.state.subject} </Text>
+				</View>
+			)
+		}
+
+		if(this.state.category == 'market'){
+			price = (
+				<View style={[styles.price, {flexDirection: 'row'}]}>
+	                <Text style={styles.current}> $ {this.state.current} </Text>
+	                <Text style={styles.origin}> original price: $ {this.state.origin} </Text>
+	            </View>
+			)
+		}
+
+		// if(this.state.image.length > 0){
+		// 	images = (
+		// 		{this.state.image.map((image, i)=>(
+		// 			<View style={styles.imageContainer} key={i}>
+		//     			<Image 
+		// 	    			style={styles.image}
+		// 	    			source={image}/>
+		// 	    	</View>
+		// 		))}.bind(this).call()
+		// 	)
+		// }
+
 		return (
 			<View style={{flex:1}}>
 			<ScrollView 
 				ref={(component) => this._scrollView = component}
 				style={styles.container}>
-				<View style={styles.title}>
-					<Text style={styles.titleText}> {this.state.subject} </Text>
-				</View>
+				{subject}
 				<View style={styles.author}>
 					<View>
 	    				<Avatar image={<Image source={{ uri: this.state.avatar }} />} size={30}/>
@@ -236,11 +244,16 @@ var AroundMePost = React.createClass({
 				<View style={styles.contents}>
     				<Text style={styles.contentsText}> {this.state.contents} </Text>
 	    		</View>
-	    		<View style={styles.imageContainer}>
-	    			<Image 
-		    			style={styles.image}
-		    			source={{uri: this.state.image}}/>
-		    	</View>
+				{price}
+
+				{this.state.image.map((image, i)=>(
+					<View style={styles.imageContainer} key={i}>
+		    			<Image 
+			    			style={styles.image}
+			    			source={image}/>
+			    	</View>
+				))}
+	    		
 
 		    	<View style={styles.commentbar}>
 		    		<View style={{marginRight: 40}}>
@@ -320,6 +333,23 @@ var styles = StyleSheet.create({
 	  	color: 'black',
 	},
 
+	price: {
+		alignItems: 'flex-end',
+		marginLeft: 10,
+	},
+
+	current:{
+	    color: 'red',
+	    fontSize: 17,
+	    marginRight: 20,
+	},
+
+	origin:{
+	    textDecorationLine:'underline',
+	    color: '#c2c2a3',
+	    fontSize: 14,
+	},
+
 	author: {
 		alignItems: "center",
 		margin: 10,
@@ -341,8 +371,8 @@ var styles = StyleSheet.create({
 	},
 
 	image: {
-		// width: 300,
-		height: 200,
+		width: width - 20,
+		height: width - 20,
 	    backgroundColor: 'transparent',
   	},
 

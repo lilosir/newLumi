@@ -20,6 +20,7 @@ var {
   StyleSheet,
   Image,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Dimensions,
   RefreshControl,
   Animated,
@@ -41,7 +42,7 @@ var Market = React.createClass({
       create_animation: new Animated.Value(0),
       animateValueY: new Animated.Value(0),
       isRefreshing: false,
-      news: [],
+      sales: [],
       isLoadingOld: false,
       loading: true,
       latest: new Date(),
@@ -52,7 +53,7 @@ var Market = React.createClass({
   componentDidMount: async function() {
 
     this.setTimeout(()=>{
-          this.getInitialNews();
+          this.getSales();
 
           Animated.timing(
         this.state.create_animation,
@@ -73,12 +74,12 @@ var Market = React.createClass({
       }, 2000); 
   },
 
-  getInitialNews: async function(){
+  getSales: async function(){
 
     try{
       var posts = await PostAPIS.getPosts({
         query:{
-          category:'publicPost',
+          category:'market',
           direction: 'older',
           date: new Date(),
         }})
@@ -86,28 +87,29 @@ var Market = React.createClass({
       if(posts.length > 0){
 
         var data = posts.map(function(item, i){
-          var img;
+          var img = [];
           if(item.body.image.length != 0){
-            img = item.body.image[0].uri;
+            img = item.body.image;
           }
 
-            return {
-                id: item._id,
-                updated_at: item.updated_at,
-                subject: item.body.subject, 
-                reply: item.comments.length,
-                avatar: apis.BASE_URL+"/"+item.user.avatar,
-                nickname: item.user.nickname,
-                image: img,
-            }
-          })
+          return {
+              id: item._id,
+              updated_at: item.updated_at, 
+              avatar: apis.BASE_URL+"/"+item.user.avatar,
+              nickname: item.user.nickname,
+              image: img,
+              content: item.body.text,
+              current: item.body.current,
+              origin: item.body.origin,
+          }
+        })
 
-          this.setState({
-          news: data,
+      this.setState({
+          sales: data,
           loading: false,
           oldest: data[data.length - 1].updated_at,
           latest: data[0].updated_at,
-        });
+      });
 
       }
         this.setState({
@@ -126,32 +128,31 @@ var Market = React.createClass({
   _getNew: async function(){
     var posts = await PostAPIS.getPosts({
         query:{
-          category:'publicPost',
+          category:'market',
           direction: 'newer',
           date: this.state.latest,
         }})
 
     if(posts.length > 0){
       var data = posts.map(function(item, i){
-        var img;
+        var img = [];
         if(item.body.image.length != 0){
-          img = item.body.image[0].uri;
+          img = item.body.image;
         }
 
           return {
               id: item._id,
               updated_at: item.updated_at,
-              subject: item.body.subject, 
-              reply: item.comments.length,
               avatar: apis.BASE_URL+"/"+item.user.avatar,
               nickname: item.user.nickname,
               image: img,
+              content: item.body.text,
           }
         })
 
         this.setState({
         latest: data[0].updated_at,
-        news: data.concat(this.state.news),
+        sales: data.concat(this.state.sales),
       });
     }
 
@@ -171,32 +172,31 @@ var Market = React.createClass({
 
     var posts = await PostAPIS.getPosts({
           query:{
-            category:'publicPost',
+            category:'market',
             direction: 'older',
             date: this.state.oldest,
           }})
 
     if(posts.length > 0){
       var data = posts.map(function(item, i){
-        var img;
+        var img = [];
         if(item.body.image.length != 0){
-          img = item.body.image[0].uri;
+          img = item.body.image;
         }
 
           return {
               id: item._id,
               updated_at: item.updated_at,
-              subject: item.body.subject, 
-              reply: item.comments.length,
               avatar: apis.BASE_URL+"/"+item.user.avatar,
               nickname: item.user.nickname,
               image: img,
+              content: item.body.text,
           }
         })
 
         this.setState({
         oldest: data[data.length - 1].updated_at,
-        news: this.state.news.concat(data),
+        sales: this.state.sales.concat(data),
       });
     }
 
@@ -262,6 +262,7 @@ var Market = React.createClass({
           </View>
         </View>
       </View>
+
       <ScrollView 
         ref={(component) => this._scrollView = component}
         style={styles.container}
@@ -273,56 +274,70 @@ var Market = React.createClass({
                 colors={['#f4cb0d']}
                 progressBackgroundColor="#00437a"/>}>
 
-            {this.state.news.map((item,i)=>(
-            <View style={{marginTop:5, marginBottom:5}} key={i}>
-              <TouchableOpacity onPress={()=> this._goThisPost(item.id)} >
-                <View style={styles.listView}>
-                  <View style={styles.icons}>
-                    <Icon name={"sms"} color="#ff531a" size={20}/>
-                    <Text style={styles.reply}> {item.reply} </Text>
-                  </View>
-                  <View style={styles.contents}>
-                    <View style={styles.subjectAndImage}>
-                      <View style={styles.subject}>
-                        <Text style={styles.subjectText}> {item.subject} </Text>
-                      </View>
-                      <View style={styles.image}>
-                        <Image style={{width: 50, height: 50}} source={{ uri: item.image }}/>
-                      </View>
-                    </View>
-                    <View style={styles.avatarAndNickname}>
-                      <View style={{marginLeft: 20}}>
-                        <Avatar image={<Image source={{ uri: item.avatar }} />} size={25}/>
-                      </View>
-                      <View style={{marginLeft: 10}}>
-                        <Text style={{color: '#1a0f00'}}> {item.nickname}</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>   
-              </TouchableOpacity>   
-            </View>
-            ))}
-            {spin}
-            {button}
-          </ScrollView>
-          <Animated.View 
-            style={
-              [styles.create, 
-              {transform: 
-                [ 
-                  {translateY: this.state.animateValueY},
-                  {rotate: rotateAnimation},
-                ]
-              }]}>
-            <TouchableOpacity onPress={this.create}>
-              <View style={styles.create2}>
-                <Icon size={40} name="add" color="#ffffff"/>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+        {this.state.sales.map((item,i)=>(
+        <View style={{marginTop:5, marginBottom:5}} key={i}>
           
+            <View style={styles.listView}>
+            <TouchableWithoutFeedback onPress={()=> this._goThisPost(item.id)} key={i}>
+              <View style={styles.avatarAndNickname}>
+                <View>
+                  <Avatar image={<Image source={{ uri: item.avatar }} />} size={40}/>
+                </View>
+                <View style={{marginLeft: 10}}>
+                  <Text style={{color: '#1a0f00', fontSize: 16}}> {item.nickname}</Text>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+              <ScrollView
+                horizontal={true}
+                style={{
+                  marginLeft: 10,
+                  marginRight: 10,
+                  backgroundColor:"#123123"}}>
+
+                {item.image.map((image,i)=>(
+                  <TouchableWithoutFeedback onPress={()=> this._goThisPost(item.id)} key={i}>
+                    <View style={styles.image}>
+                      <Image style={{width: 100, height: 100}} source={image}/>
+                    </View>
+                  </TouchableWithoutFeedback>
+                ))}
+                
+              </ScrollView>
+              <TouchableWithoutFeedback onPress={()=> this._goThisPost(item.id)}>
+              <View style={[styles.price, {flexDirection: 'row'}]}>
+                <Text style={styles.current}> $ {item.current} </Text>
+                <Text style={styles.origin}> original price: $ {item.origin} </Text>
+              </View>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={()=> this._goThisPost(item.id)}>
+              <View style={styles.contents}>
+                <Text style={styles.contentsText}> {item.content} </Text>
+              </View>
+              </TouchableWithoutFeedback>
+            </View>    
+        </View>
+        ))}
+        {spin}
+        {button}
+      </ScrollView>
+      <Animated.View 
+        style={
+          [styles.create, 
+          {transform: 
+            [ 
+              {translateY: this.state.animateValueY},
+              {rotate: rotateAnimation},
+            ]
+          }]}>
+        <TouchableOpacity onPress={this.create}>
+          <View style={styles.create2}>
+            <Icon size={40} name="add" color="#ffffff"/>
           </View>
+        </TouchableOpacity>
+      </Animated.View>
+      
+      </View>
       );
     }
 });
@@ -366,7 +381,7 @@ var styles = StyleSheet.create({
   },
 
   create2: {
-    flex:1, 
+    // flex:1, 
     justifyContent: 'center', 
     alignItems: 'center',
     width:40,
@@ -384,61 +399,53 @@ var styles = StyleSheet.create({
   },
 
   listView: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     borderBottomWidth:0.5,
     borderBottomColor: "#dddddd",
     borderTopWidth:0.5,
     borderTopColor: "#dddddd",
-    height: 110,
     backgroundColor: "#ffffff"
   },
 
-  icons: {
-    flex: 1,
-    alignItems: 'center',
-    marginTop: 15,
+  price: {
+    alignItems: 'flex-end',
+    margin: 10,
   },
 
-  reply: {
-    fontSize : 10,
-    color: '#eaeae1',
+  contentsText: {
+    color: 'black',
+    fontSize: 15,
   },
 
-  contents: {
-    marginTop: 10,
-    flexDirection: "column",
-    flex: 8,
+  current:{
+    color: 'red',
+    fontSize: 17,
+    marginRight: 20,
   },
 
-  subjectAndImage: {
-    flex:3,
-    // backgroundColor: '#321312',
-    flexDirection: 'row',
+  origin:{
+    textDecorationLine:'underline',
+    color: '#c2c2a3',
+    fontSize: 14,
   },
 
-  subject: {
-    marginLeft: 15,
-    flex: 5,
-  },
-
-  subjectText: {
-    fontWeight: '200',
-    fontSize: 18,
-    color: '#1a0f00',
+  contents:{
+    margin:10,
   },
 
   image: {
-    flex:2,
+    marginRight: 10,
     alignItems: 'center',
-    justifyContent: 'center',
   },
 
   avatarAndNickname: {
-    flex: 2,
     // backgroundColor: "#123123",
+    margin:10,
     alignItems: 'center',
     flexDirection: 'row',
   },
 });
 
 module.exports = Market;
+
+
