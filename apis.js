@@ -1,4 +1,4 @@
-var BASE_URL = 'http://10.100.26.226:3100';
+var BASE_URL = 'http://10.100.65.163:3100';
 // var BASE_URL = 'http://192.168.0.133:3100';
 // var Users = require('./operations/users');
 var beforeActions = [];

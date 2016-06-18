@@ -59,7 +59,7 @@ const items =[
       name:'create',
       color:"#0066ff",
       action: function(){
-        console.warn("SDFSDF")
+        Actions.notes();
       }
     },
     {

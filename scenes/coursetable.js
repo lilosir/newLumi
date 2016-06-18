@@ -96,12 +96,6 @@ var CourseTable = React.createClass({
 		]
 	},
 
-	
-
-			
-
-			
-
 	createTable: function(){
 		console.warn("SDFSDF")
 	},
@@ -147,8 +141,8 @@ var CourseTable = React.createClass({
 							</View>
 							{
 								day.map((course, j)=>{
-									var time1 = course.starttime.getHours() + ":" + course.starttime.getMinutes();
-									var time2 = course.endtime.getHours() + ":" + course.endtime.getMinutes();
+									var time1 = course.starttime.getHours() + ":" + (course.starttime.getMinutes()<10?'0':'') + course.starttime.getMinutes();
+									var time2 = course.endtime.getHours() + ":" + (course.endtime.getMinutes()<10?'0':'') + course.endtime.getMinutes();
 									return(
 										<View style={{backgroundColor: "white"}} key={j}>
 											<View style={styles.items}>

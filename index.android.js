@@ -3,7 +3,7 @@
 var {Router, Route, Schema, Animations, TabBar} = require('react-native-router-flux');
 var React = require('react-native');
 
-// var Initial = require('./scenes/initial');
+var Initial = require('./scenes/initial');
 var Login = require('./scenes/login');
 var CreateAccount = require('./scenes/createAccount');
 var Contacts = require('./scenes/contacts');
@@ -19,7 +19,7 @@ var CreatePost = require('./scenes/createPost');
 var CreateBala = require('./scenes/createBala');
 var CreateSale = require('./scenes/createSale');
 var CourseTable = require('./scenes/coursetable');
-var Initial = require('./scenes/initial');
+var Notes = require('./scenes/notes');
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
 
@@ -185,6 +185,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="createbala" component={CreateBala} title="New Bala" schema="modal"/>
             <Route name="createsale" component={CreateSale} title="New Sale" schema="modal"/>
             <Route name="coursetable" component={CourseTable} title="My Courses"/>
+            <Route name="notes" component={Notes} title="My Notes"/>
           </Router>
         </DrawerLayoutAndroid>
         
