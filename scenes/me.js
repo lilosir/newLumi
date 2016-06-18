@@ -12,6 +12,7 @@ var {
 	Text,
 	StyleSheet, 
 	Image,
+	TouchableOpacity,
 } = React;
 
 var Me = React.createClass({
@@ -62,6 +63,10 @@ var Me = React.createClass({
 	      // onPress: Actions.pop
 	    }]);  
 	    this.getmyself();
+	},
+
+	logout: function(){
+		Actions.login();
 	},
 
 	render: function() {
@@ -139,11 +144,11 @@ var Me = React.createClass({
 						</View>					
 		            </View>
 		        </View>
-
-		        <View style={styles.logout}>
-		        	<Text style={styles.logoutText}> Log Out </Text>
-		        </View>
-
+		        <TouchableOpacity onPress={this.logout}>
+			        <View style={styles.logout}>
+			        	<Text style={styles.logoutText}> Log Out </Text>
+			        </View>
+		        </TouchableOpacity>
 			</View>
 		);
 	}

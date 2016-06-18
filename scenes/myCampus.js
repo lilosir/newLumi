@@ -16,9 +16,8 @@ var Market = require('./market');
 var Notifications = require('./notifications');
 
 var CustomTabbar = require('./customTabbar').default;
-// var {Avatar, List, Subheader, IconToggle, Icon} = require('react-native-material-design');
-var ScrollableTabView = require('react-native-scrollable-tab-view');
-var Icon = require('react-native-vector-icons/FontAwesome');
+var {Avatar, List, Subheader, Card, Icon, TYPO, COLOR} = require('react-native-material-design');
+
 var UserAPIS = require('../operations/users');
 var MessagesAPIS = require('../operations/messages');
 var GcmAndroid = require('react-native-gcm-android');
@@ -43,7 +42,47 @@ var {
   navigationView,
 } = React;
 
-var MyCircle = React.createClass({
+const items =[
+    {
+      title:"Course Timetable",
+      describe:"Campany the days on campus",
+      name:'grid-on',
+      color:"#ff751a",
+      action: ()=>{
+        Actions.coursetable();
+      }
+      
+    },
+    {
+      title:"Notes",
+      describe:"Taking notes is a good habit",
+      name:'create',
+      color:"#0066ff",
+      action: function(){
+        console.warn("SDFSDF")
+      }
+    },
+    {
+      title:"Q & A",
+      describe:"Meet problems on study? Come here!",
+      name:'lightbulb-outline',
+      color:"#ffff00",
+      action: function(){
+        console.warn("SDFSDF")
+      }
+    },
+    {
+      title:"Contact LU",
+      describe:"We will help you",
+      name:'phone',
+      color:"#339966",
+      action: function(){
+        console.warn("SDFSDF")
+      }
+    },
+];
+
+var MyCampus = React.createClass({
 
   mixins: [nav],
 
@@ -52,6 +91,8 @@ var MyCircle = React.createClass({
       notification_count: 0,
     };
   },
+
+
 
   openDrawer: function(){
     this.props.openDrawer(true);
@@ -70,13 +111,7 @@ var MyCircle = React.createClass({
       onPress: this.openDrawer,
     }]);
 
-    this._getInitialNotificationNumber();
-
-    // this.setRightButtons([{
-    //   icon: 'inbox',
-    //   notification_count:0,
-    //   onPress: this.goNotificaitons,
-    // }]);  
+    this._getInitialNotificationNumber(); 
     
     GCM.subscribe(this._aroundmeOnMessage);
   },
@@ -140,20 +175,20 @@ var MyCircle = React.createClass({
   render: function() {
     // console.log('inital page:',this.props.initialPage);
     return (
-      <ScrollableTabView 
-        initialPage={this.props.initialPage} 
-        tabBarPosition="bottom" 
-        style={styles.container}
-        tabBarUnderlineColor="#f4cb0d"
-        tabBarBackgroundColor="#00437a"
-        tabBarActiveTextColor="#f4cb0d"
-        tabBarInactiveTextColor="#f4cb0d"
-        renderTabBar={() => <CustomTabbar/>}>
-        <Friends tabLabel='whatshot|News'/>
-        <AroundMe tabLabel='camera|Around Me'/>
-        <Market tabLabel='store-mall-directory|LU Market'/>
-        <Bala tabLabel='accessibility|Bala'/>
-      </ScrollableTabView>
+      <View style={styles.container}>
+        {
+          items.map((item, i)=>(
+            <View style={styles.item} key={i}>
+              <TouchableOpacity onPress={item.action.bind(this)}>
+                <List            
+                  primaryText={item.title}
+                  secondaryText={item.describe}
+                  leftAvatar={<Icon color={item.color} size={40} name={item.name}/>}/>
+              </TouchableOpacity>
+            </View>
+          ))
+        }
+      </View>
     )        
   },
 
@@ -162,11 +197,21 @@ var MyCircle = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'flex-start',
     marginTop: 55,
-    // padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f5f5f0',
+  },
+
+  item: {
+    backgroundColor:"#ffffff",
+    borderRadius: 5,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
+    height: 80,
+    borderWidth:1, 
+    borderColor: "#eeeeee",
+    justifyContent: 'center',
   },
 });
 
-module.exports = MyCircle;
+module.exports = MyCampus;

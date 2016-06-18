@@ -382,7 +382,6 @@ var styles = StyleSheet.create({
 
   subjectAndImage: {
   	flex:3,
-  	// backgroundColor: '#321312',
   	flexDirection: 'row',
   },
 

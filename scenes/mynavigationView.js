@@ -34,11 +34,11 @@ const routers = [
     },
   },
   {
-    name:'My Study',
+    name:'My Campus',
     icon: 'school',
     action: function(){
       this.props.openDrawer(false);
-      Actions.contacts({initialPage: 0})
+      Actions.mycampus({initialPage: 0})
     },
   },
   {
@@ -46,20 +46,22 @@ const routers = [
     icon: 'directions-bus',
     action: function(){
       this.props.openDrawer(false);
-      Actions.bus()
+      Actions.bus();
     },
   },
   {
     name:'Map',
     icon: 'map',
-    action: function(){Actions.contacts({initialPage: 0})},
+    action: function(){
+      this.props.openDrawer(false);
+      Actions.contacts({initialPage: 0})},
   },
   {
     name:'Me',
     icon: 'person',
     action: function(){
       this.props.openDrawer(false);
-      Actions.me()
+      Actions.me();
     },
   },
 ];
