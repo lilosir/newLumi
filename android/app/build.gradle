@@ -129,7 +129,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.3.0' // <- Add this line
     compile project(':RNGcmAndroid')                         // <- Add this line
     compile project(':react-native-system-notification')     // <- Add this line
-    //compile 'com.google.android.gms:play-services:8.3.0'
+    compile project(':reactnativemapboxgl')
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.google.android.gms:play-services-maps:8.3.0'
     compile 'com.google.android.gms:play-services-plus:8.3.0'

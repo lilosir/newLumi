@@ -54,7 +54,8 @@ const routers = [
     icon: 'map',
     action: function(){
       this.props.openDrawer(false);
-      Actions.contacts({initialPage: 0})},
+      Actions.mymap();
+    },
   },
   {
     name:'Me',
