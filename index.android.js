@@ -146,29 +146,29 @@ if (GcmAndroid.launchNotification) {
           renderNavigationView={() => <MynavigationView openDrawer={this._openDrawer} Info={this.state.info}></MynavigationView>}>
         
           <Router hideNavBar={false} 
-              barButtonTextStyle={{
-                color: '#f4cb0d'
-              }}
+            barButtonTextStyle={{
+              color: '#f4cb0d'
+            }}
 
-              barButtonIconStyle={{
-                tintColor: '#f4cb0d'
-              }}
+            barButtonIconStyle={{
+              tintColor: '#f4cb0d'
+            }}
 
-              navigationBarStyle={{
-                backgroundColor: '#00437a'
-              }}
+            navigationBarStyle={{
+              backgroundColor: '#00437a'
+            }}
 
-              setLockMode={this._setLockMode}
+            setLockMode={this._setLockMode}
 
-              openDrawer={this._openDrawer}
+            openDrawer={this._openDrawer}
 
-              getInfo = {this._getInfo}
+            getInfo = {this._getInfo}
 
-              renderTitle={ renderTitle }
-              renderLeftButton={ renderLeftButton }
-              renderRightButton={ renderRightButton }
+            renderTitle={ renderTitle }
+            renderLeftButton={ renderLeftButton }
+            renderRightButton={ renderRightButton }
 
-              titleStyle = {{color:'#f4cb0d',}}>
+            titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
             <Route name="initial" component={Initial} title="initial" schema="modal"/>
             <Route name="login" component={Login} title="login" schema="modal"/>
@@ -187,7 +187,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="createsale" component={CreateSale} title="New Sale" schema="modal"/>
             <Route name="coursetable" component={CourseTable} title="My Courses"/>
             <Route name="notes" component={Notes} title="My Notes"/>
-            <Route name="mymap" component={MyMap} initial={true}  title="Map"/>
+            <Route name="mymap" component={MyMap} initial={true} title="Map"/>
           </Router>
         </DrawerLayoutAndroid>
         
