@@ -395,7 +395,7 @@ var styles = StyleSheet.create({
   	reply: {
 	    flex: 1,
 	    borderRadius: 5,
-	    backgroundColor: '#008ae6',
+	    backgroundColor: '#03a9f4',
 	    alignItems : 'center',
 	    justifyContent: 'center',
 	    width: 40,
