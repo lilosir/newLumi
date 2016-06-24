@@ -63,12 +63,21 @@ const items =[
       }
     },
     {
+      title:"My Emails",
+      describe:"Check your Emails here",
+      name:'mail-outline',
+      color:"#990099",
+      action: function(){
+        console.warn("emails")
+      }
+    },
+    {
       title:"Q & A",
       describe:"Meet problems on study? Come here!",
       name:'lightbulb-outline',
       color:"#ffff00",
       action: function(){
-        console.warn("SDFSDF")
+        console.warn("Q & A")
       }
     },
     {
@@ -77,7 +86,7 @@ const items =[
       name:'phone',
       color:"#339966",
       action: function(){
-        console.warn("SDFSDF")
+        console.warn("Numbers")
       }
     },
 ];
