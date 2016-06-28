@@ -10,6 +10,8 @@ import com.mapbox.reactnativemapboxgl.ReactNativeMapboxGLPackage;
 import com.oney.gcm.GcmPackage;                             // <- Add this line
 import io.neson.react.notification.NotificationPackage;     // <- Add this line
 
+import co.apptailor.googlesignin.RNGoogleSigninPackage;  // <--- import
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +46,8 @@ public class MainActivity extends ReactActivity {
             new ImagePickerPackage(),
             new GcmPackage(),             
             new NotificationPackage(this),
-            new ReactNativeMapboxGLPackage()
+            new ReactNativeMapboxGLPackage(),
+            new RNGoogleSigninPackage()
         );
     }
 }

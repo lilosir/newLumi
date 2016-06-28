@@ -7,7 +7,6 @@ var apis = require('../apis');
 // var Loading = require('./loading');
 var Reload = require('./reload');
 var Friends = require('./friends');
-
 var SearchFriends = require('./searchFriends');
 var AroundMe = require('./aroundme');
 var Bala = require('./bala');

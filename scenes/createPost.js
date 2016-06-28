@@ -94,6 +94,8 @@ var CreatePost = React.createClass({
   
   componentDidMount: function() {
 
+    this.props.setLockMode("locked-closed");
+
     this.setRightButtons([{
       icon: 'send',
       onPress: this.send,

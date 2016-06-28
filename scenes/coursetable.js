@@ -24,6 +24,8 @@ var CourseTable = React.createClass({
 	},
 
 	componentDidMount: function() {
+		this.props.setLockMode("locked-closed");
+		
 		this.setState({
 			courses: this.getCourses(), 
 		});

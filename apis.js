@@ -1,6 +1,6 @@
-// var BASE_URL = 'http://10.0.1.144:3100';
-var BASE_URL = 'http://192.168.0.133:3100';
-// var Users = require('./operations/users');
+var BASE_URL = 'http://10.100.27.88:3100';
+// var BASE_URL = 'http://192.168.0.133:3100';
+
 var beforeActions = [];
 var afterActions = [];
 

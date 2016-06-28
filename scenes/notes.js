@@ -25,6 +25,8 @@ var Notes = React.createClass({
 	},
 
 	componentDidMount: function() {
+		this.props.setLockMode("locked-closed");
+		
 		this.setState({
 			notes: this.getNotes(), 
 		});

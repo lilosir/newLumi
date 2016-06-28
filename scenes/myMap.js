@@ -5,6 +5,7 @@ var nav = require('../NavbarMixin');
 var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplete');
 var {Avatar, List, Icon} = require('react-native-material-design');
 var {height, width} = Dimensions.get('window');
+var TimerMixin = require('react-timer-mixin');
 
 import {
   AppRegistry,
@@ -17,6 +18,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TouchableWithoutFeedback,
+  Animated,
 } from 'react-native';
 
 var contents = {
@@ -25,7 +27,7 @@ var contents = {
 
 var MyMap = React.createClass({
 
-  mixins: [Mapbox.Mixin, nav],
+  mixins: [Mapbox.Mixin, nav, TimerMixin],
 
   getInitialState() {
     return {
@@ -38,6 +40,65 @@ var MyMap = React.createClass({
       },
       text: null,
       places:[],
+      animateValueY: new Animated.Value(0),
+      recommendations: {
+        campus: [
+            {
+              name:'ATAC',
+              lat: 48.421736,
+              lng: -89.259356, 
+            },
+            {
+              name: 'Chancellor Paterson Library',
+              lat: 48.420655,
+              lng: -89.260360, 
+            },
+            {
+              name:'North Residence',
+              lat: 48.417722,
+              lng: -89.263365, 
+            },
+            {
+              name: 'South Residence',
+              lat: 48.416888,
+              lng: -89.262991, 
+            }
+        ],
+        food: [
+            {
+              name:'Sushi Station',
+              lat: 48.423354,
+              lng: -89.237433, 
+            },
+            {
+              name: 'Applebees',
+              lat: 48.407722,
+              lng: -89.258890, 
+            },
+            {
+              name:'Prospector Steak House',
+              lat: 48.433803,
+              lng: -89.220044, 
+            },
+        ],
+        entertain:[
+            {
+              name:'Marios Bowl',
+              lat: 48.414731,
+              lng: -89.243230, 
+            },
+            {
+              name: 'Loch Lomond Ski Area',
+              lat: 48.295069,
+              lng: -89.347427, 
+            },
+            {
+              name:'Fort William Country Club',
+              lat: 48.325762,
+              lng: -89.319268, 
+            },
+        ]
+      },
     }
   },
   onUserLocationChange(location) {
@@ -51,7 +112,12 @@ var MyMap = React.createClass({
   },
 
   componentDidMount: function() {
-     
+
+    // this.setState({
+    //   recommendations: this.getRec(),
+    // });
+
+    console.log("!@#!#@",this.state.recommendations.campus)
     let innerScrollView = this._scrollView.refs.InnerScrollView;
     let scrollView = this._scrollView.refs.ScrollView;
 
@@ -88,6 +154,67 @@ var MyMap = React.createClass({
     // );
   },
 
+  getRec: function(){
+    return {
+      campus: [
+          {
+            name:'ATAC',
+            lat: 48.421736,
+            lng: -89.259356, 
+          },
+          {
+            name: 'Chancellor Paterson Library',
+            lat: 48.420655,
+            lng: -89.260360, 
+          },
+          {
+            name:'North Residence',
+            lat: 48.417722,
+            lng: -89.263365, 
+          },
+          {
+            name: 'South Residence',
+            lat: 48.416888,
+            lng: -89.262991, 
+          }
+      ],
+      food: [
+          {
+            name:'Sushi Station',
+            lat: 48.423354,
+            lng: -89.237433, 
+          },
+          {
+            name: 'Applebees',
+            lat: 48.407722,
+            lng: -89.258890, 
+          },
+          {
+            name:'Prospector Steak House',
+            lat: 48.433803,
+            lng: -89.220044, 
+          },
+      ],
+      entertain:[
+          {
+            name:'Marios Bowl',
+            lat: 48.414731,
+            lng: -89.243230, 
+          },
+          {
+            name: 'Loch Lomond Ski Area',
+            lat: 48.295069,
+            lng: -89.347427, 
+          },
+          {
+            name:'Fort William Country Club',
+            lat: 48.325762,
+            lng: -89.319268, 
+          },
+      ]
+    }
+  },
+
   changeText: async function(value){
 
     try{
@@ -106,7 +233,7 @@ var MyMap = React.createClass({
           places: predictions,
         });
     }catch(e){
-      console.warn('err',err);
+      console.warn('err',e);
     }
   },
 
@@ -194,13 +321,47 @@ var MyMap = React.createClass({
     }
   },
 
+  goList: function(){
+    Animated.timing(
+      this.state.animateValueY,
+      {
+        toValue: -height ,
+        duration: 1000,
+      }
+    ).start();
+  },
+
   goToMyself: function(){
     this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 14);
+  },
+
+  goFast: function(lat, lng){
+    this.clearInput();
+    this.setState({
+      destination: {
+        coordinates: [lat, lng],
+      },
+    });
+
+    this.addAnnotations(mapRef, [
+        {
+          coordinates: [lat,lng],
+          type: 'point',
+          title: 'This is a new marker',
+          id: 'foo'
+        }
+      ])
+
+    this.setCenterCoordinateAnimated(mapRef, lat, lng);
+
+    this.options();
+    this.back();
   },
 
   options: async function(){
 
     this.goToMyself();
+
     try{
 
       var des_lat = this.state.destination.coordinates[0];
@@ -231,7 +392,24 @@ var MyMap = React.createClass({
     }
   },
 
+  back: function(){
+    Animated.timing(
+      this.state.animateValueY,
+      {
+        toValue: height ,
+        duration: 1000,
+      }
+    ).start();
+  },
+
   render() {
+    var options;
+    if(this.state.destination.coordinates[0] != 0 ||
+       this.state.destination.coordinates[1] != 0 ){
+      options = <TouchableOpacity onPress={()=> (this.options())} style={styles.options}>
+                  <Icon size={20} name="directions" color="#ffffff"/>
+                </TouchableOpacity>
+    }
     return (
       <View style={styles.container}>
         <Mapbox
@@ -293,16 +471,101 @@ var MyMap = React.createClass({
           
           </ScrollView>
         </View>
+        <TouchableOpacity onPress={this.goList} style={styles.goList}>
+            <Icon size={20} name="stars" color="#ffffff"/>
+        </TouchableOpacity>
         <TouchableOpacity onPress={this.goToMyself} style={styles.goToMyself}>
             <Icon size={20} name="my-location" color="#ffffff"/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=> (this.options())} style={styles.options}>
-            <Icon size={20} name="directions" color="#ffffff"/>
-        </TouchableOpacity>
+        {options}
+
+        <Animated.View 
+          style={
+            [styles.directions, 
+            {transform: 
+              [ 
+                {translateY: this.state.animateValueY},
+              ]
+            }]}>
+            <View style={{marginTop: 10, justifyContent:'center', flexDirection: 'row'}}>
+              <Text style={{fontSize: 22, marginLeft: 10, color: 'black',flex: 6}}>
+                Express direction
+              </Text>
+              <TouchableOpacity onPress={this.back} style={{flex:1}}>
+                <Icon size={36} name="clear" color="#123123"/>
+              </TouchableOpacity>
+            </View>
+            <ScrollView>
+              <View style={{ 
+                marginLeft: 40, 
+                marginTop: 20,
+                justifyContent: 'center'}}>
+                <View style={{flexDirection:'row'}}>
+                  <Icon name="local-library" size={30}/>
+                  <Text style={{fontSize: 18, marginLeft: 10,color: 'black',}}> Campus </Text>
+                </View>
+                {this.state.recommendations.campus.map(function(place, i){
+                    return(
+                      <TouchableOpacity 
+                        key={i} 
+                        style={{marginTop: 10, marginLeft:40}}
+                        onPress={()=> this.goFast(place.lat, place.lng)}>
+                        <Text style={{fontSize: 14,color: 'black',}}> {place.name} </Text>
+                      </TouchableOpacity>
+                    )
+                  }.bind(this))
+                }
+              </View>
+
+              <View style={{ 
+                marginLeft: 40, 
+                marginTop: 20,
+                justifyContent: 'center'}}>
+                <View style={{flexDirection:'row'}}>
+                  <Icon name="restaurant" size={30}/>
+                  <Text style={{fontSize: 18, marginLeft: 10,color: 'black',}}> Food </Text>
+                </View>
+                {this.state.recommendations.food.map(function(place, i){
+                    return(
+                      <TouchableOpacity 
+                        key={i} 
+                        style={{marginTop: 10, marginLeft:40}}
+                        onPress={()=> this.goFast(place.lat, place.lng)}>
+                        <Text style={{fontSize: 14,color: 'black',}}> {place.name} </Text>
+                      </TouchableOpacity>
+                    )
+                  }.bind(this))
+                }
+              </View>
+
+              <View style={{ 
+                marginLeft: 40, 
+                marginTop: 20,
+                justifyContent: 'center'}}>
+                <View style={{flexDirection:'row'}}>
+                  <Icon name="local-activity" size={30}/>
+                  <Text style={{fontSize: 18, marginLeft: 10,color: 'black',}}> Entertain </Text>
+                </View>
+                {this.state.recommendations.entertain.map(function(place, i){
+                    return(
+                      <TouchableOpacity 
+                        key={i} 
+                        style={{marginTop: 10, marginLeft:40}}
+                        onPress={()=> this.goFast(place.lat, place.lng)}>
+                        <Text style={{fontSize: 14,color: 'black',}}> {place.name} </Text>
+                      </TouchableOpacity>
+                    )
+                  }.bind(this))
+                }
+              </View>
+            </ScrollView>
+        </Animated.View>
       </View>
     );
   }
 });
+
+
 
 var styles = StyleSheet.create({
   container: {
@@ -321,7 +584,6 @@ var styles = StyleSheet.create({
     backgroundColor: '#f5f5f0',
     flexDirection:"row",
   },
-  // #03a9f4
 
   bg2: {
     backgroundColor: 'white',
@@ -356,6 +618,19 @@ var styles = StyleSheet.create({
       fontSize: 16,
   },
 
+  goList: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#03a9f4',
+    justifyContent: 'center', 
+    alignItems: 'center',
+    alignSelf: 'center',
+    left:  width - 50,
+    top:   height - 230,    
+  },
+
   goToMyself: {
     position: 'absolute',
     width: 40,
@@ -380,7 +655,16 @@ var styles = StyleSheet.create({
     alignSelf: 'center',
     left: width - 50,
     top:  height - 130,    
-  }
+  },
+
+  directions: {
+    position: 'absolute',
+    width: width,
+    height: height - 60,
+    backgroundColor: 'white',
+    left: 0,
+    top:  height,    
+  },
 });
 
 module.exports = MyMap;

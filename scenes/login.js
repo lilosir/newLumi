@@ -111,8 +111,8 @@ var Login = React.createClass({
           this.props.getInfo({avatar: avatar, nickname:user.nickname});
         }      
 
-        Actions.contacts({initialPage: 0});
-        // Actions.mycampus();
+        // Actions.contacts({initialPage: 0});
+        Actions.mycampus();
         // Actions.mymap();
       }catch(e){
         console.warn("login action error:", e.message);

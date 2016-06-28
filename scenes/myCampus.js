@@ -56,7 +56,7 @@ const items =[
     {
       title:"Notes",
       describe:"Taking notes is a good habit",
-      name:'create',
+      name:'border-color',
       color:"#0066ff",
       action: function(){
         Actions.notes();
@@ -68,7 +68,7 @@ const items =[
       name:'mail-outline',
       color:"#990099",
       action: function(){
-        console.warn("emails")
+        Actions.emails({initialPage:0});
       }
     },
     {

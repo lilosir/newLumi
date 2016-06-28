@@ -11,7 +11,20 @@
           "package_name": "com.lumi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "652447600358-f3iknubv0iiot21lm0siruldpbq2qgn4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lumi",
+            "certificate_hash": "8DF0B6EDB64490D6E0E2093B12B005EDB5F226EB"
+          }
+        },
+        {
+          "client_id": "652447600358-4le58p93fodbb43g38uh02mctihvr9t5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0m9OhrKeOAPsKn9NrUnc_R9NVWW1GFWw"

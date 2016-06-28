@@ -32,6 +32,9 @@ var Notifications = React.createClass({
 	},
 
 	componentDidMount: function() {
+
+    this.props.setLockMode("locked-closed");
+    
     this.setLeftButtons([{
       icon: 'navigate-before',
       onPress: this.goContact,
