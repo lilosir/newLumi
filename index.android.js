@@ -22,6 +22,7 @@ var CourseTable = require('./scenes/coursetable');
 var Notes = require('./scenes/notes');
 var MyMap = require('./scenes/myMap');
 var Emails = require('./scenes/emails');
+var CreateMail = require('./scenes/createMail');
 // var Loading = require('./scenes/loading');
 // var Reload = require('./scenes/reload');
 
@@ -190,6 +191,7 @@ if (GcmAndroid.launchNotification) {
             <Route name="notes" component={Notes} title="My Notes"/>
             <Route name="mymap" component={MyMap}  title="Map"/>
             <Route name="emails" component={Emails}  title="My Emails"/>
+            <Route name="createmail" component={CreateMail}  title="New Message" schema="modal"/>
           </Router>
         </DrawerLayoutAndroid>
         
