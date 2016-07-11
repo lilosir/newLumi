@@ -68,18 +68,18 @@ const items =[
       name:'mail-outline',
       color:"#990099",
       action: function(){
-        Actions.emails({initialPage:0});
+        Actions.emails();
       }
     },
-    {
-      title:"Q & A",
-      describe:"Meet problems on study? Come here!",
-      name:'lightbulb-outline',
-      color:"#ffff00",
-      action: function(){
-        console.warn("Q & A")
-      }
-    },
+    // {
+    //   title:"Q & A",
+    //   describe:"Meet problems on study? Come here!",
+    //   name:'lightbulb-outline',
+    //   color:"#ffff00",
+    //   action: function(){
+    //     console.warn("Q & A")
+    //   }
+    // },
     {
       title:"Contact LU",
       describe:"We will help you",

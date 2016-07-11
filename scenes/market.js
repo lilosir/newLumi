@@ -293,7 +293,7 @@ var Market = React.createClass({
                 style={{
                   marginLeft: 10,
                   marginRight: 10,
-                  backgroundColor:"#123123"}}>
+                  backgroundColor:"white"}}>
 
                 {item.image.map((image,i)=>(
                   <TouchableWithoutFeedback onPress={()=> this._goThisPost(item.id)} key={i}>

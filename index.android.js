@@ -19,6 +19,7 @@ var CreatePost = require('./scenes/createPost');
 var CreateBala = require('./scenes/createBala');
 var CreateSale = require('./scenes/createSale');
 var CourseTable = require('./scenes/coursetable');
+var CreateCourse = require('./scenes/createCourse');
 var Notes = require('./scenes/notes');
 var MyMap = require('./scenes/myMap');
 var Emails = require('./scenes/emails');
@@ -173,7 +174,7 @@ if (GcmAndroid.launchNotification) {
             titleStyle = {{color:'#f4cb0d',}}>
             <Schema name="modal" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
             <Route name="initial" component={Initial} title="initial" schema="modal"/>
-            <Route name="login" component={Login} title="login" initial={true}  schema="modal"/>
+            <Route name="login" component={Login} title="login" initial={true} schema="modal"/>
             <Route name="createAccount" component={CreateAccount} title="New Account" schema="modal"/>
             <Route name="contacts" component={Contacts}  title="Contacts"/>
             <Route name="chats" component={Chats}  title="Chats"/>
@@ -188,10 +189,11 @@ if (GcmAndroid.launchNotification) {
             <Route name="createbala" component={CreateBala} title="New Bala" schema="modal"/>
             <Route name="createsale" component={CreateSale} title="New Sale" schema="modal"/>
             <Route name="coursetable" component={CourseTable} title="My Courses"/>
+            <Route name="createcourse" component={CreateCourse} title="New Course"/>
             <Route name="notes" component={Notes} title="My Notes"/>
             <Route name="mymap" component={MyMap}  title="Map"/>
             <Route name="emails" component={Emails}  title="My Emails"/>
-            <Route name="createmail" component={CreateMail}  title="New Message" schema="modal"/>
+            <Route name="createmail" component={CreateMail} title="New Message" schema="modal"/>
           </Router>
         </DrawerLayoutAndroid>
         

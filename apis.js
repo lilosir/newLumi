@@ -1,4 +1,4 @@
-var BASE_URL = 'http://10.100.27.88:3100';
+var BASE_URL = 'http://10.100.24.205:3100';
 // var BASE_URL = 'http://192.168.0.133:3100';
 
 var beforeActions = [];

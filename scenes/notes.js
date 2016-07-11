@@ -3,6 +3,10 @@
 var React = require('react-native');
 var CreateButton = require('./createButton');
 var apis = require('../apis');
+var {Actions} = require('react-native-router-flux');
+var {Avatar, List, Subheader, IconToggle, Icon, Button} = require('react-native-material-design');
+var nav  = require('../NavbarMixin');
+var TimerMixin = require('react-timer-mixin');
 
 var {
 	View,
@@ -17,7 +21,8 @@ var {
 } = React;
 
 var Notes = React.createClass({
-
+	mixins: [nav, TimerMixin],
+	
 	getInitialState: function() {
 		return {
 			notes: [],
@@ -30,6 +35,15 @@ var Notes = React.createClass({
 		this.setState({
 			notes: this.getNotes(), 
 		});
+
+		this.setLeftButtons([{
+	      icon: 'arrow-back',
+	      onPress: this.back,
+	    }]);
+	},
+
+	back: function(){
+	    Actions.mycampus();
 	},
 
 	getNotes: function(){

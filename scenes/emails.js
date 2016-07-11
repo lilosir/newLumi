@@ -69,6 +69,12 @@ var Emails = React.createClass({
 
     this._setupGoogleSignin();
 
+
+    this.setLeftButtons([{
+      icon: 'arrow-back',
+      onPress: this.back,
+    }]);
+
     this.setRightButtons([{
       icon: 'create',
       onPress: this.writeEmail,
@@ -78,6 +84,10 @@ var Emails = React.createClass({
       loading: true,
       isLoadingOld: true,
     });
+  },
+
+  back: function(){
+    Actions.mycampus();
   },
 
   writeEmail: function(){

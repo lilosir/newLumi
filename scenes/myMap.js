@@ -6,6 +6,7 @@ var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplet
 var {Avatar, List, Icon} = require('react-native-material-design');
 var {height, width} = Dimensions.get('window');
 var TimerMixin = require('react-timer-mixin');
+var {Actions} = require('react-native-router-flux');
 
 import {
   AppRegistry,
@@ -116,6 +117,10 @@ var MyMap = React.createClass({
     // this.setState({
     //   recommendations: this.getRec(),
     // });
+    this.setLeftButtons([{
+      icon: 'menu',
+      onPress: this.openDrawer,
+    }]);
 
     console.log("!@#!#@",this.state.recommendations.campus)
     let innerScrollView = this._scrollView.refs.InnerScrollView;
@@ -138,20 +143,24 @@ var MyMap = React.createClass({
         });
     });
 
-    // navigator.geolocation.getCurrentPosition(
-    //   (position) => {
-    //     var initialPosition = JSON.stringify(position);
-    //     this.setState({
-    //       center: {
-    //         latitude: position.coords.latitude,
-    //         longitude: position.coords.longitude,
-    //       },
-    //     });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var initialPosition = JSON.stringify(position);
+        this.setState({
+          center: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+        });
 
-    //   },
-    //   (error) => alert(error.message),
-    //   {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    // );
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    );
+  },
+
+  openDrawer: function(){
+    this.props.openDrawer(true);
   },
 
   getRec: function(){
