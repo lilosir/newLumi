@@ -16,7 +16,7 @@ var nav  = require('../NavbarMixin');
 var {height, width} = Dimensions.get('window');
 var {Avatar, List, Subheader, IconToggle, Icon, Button} = require('react-native-material-design');
 var {Actions} = require('react-native-router-flux');
-
+var CoursesAPIS = require('../operations/courses');
 const items = [
   {
     name:'subject',
@@ -70,12 +70,39 @@ var createCourse = React.createClass({
       items: items,
     });
     
-    if(this.checkIfEmpty()){
-      console.log(this.state);
+    if(this.checkIfValid()){
+      console.log(this.state.items[0].value);
+      console.log(this.state.items[1].value);
+      console.log(this.state.items[2].value);
+      console.log(this.state.items[3].value);
+      console.log(this.state.items[4].value);
+      console.log(this.state.items[5].value);
+      try{
+        var result = await CoursesAPIS.updateclasses(global.SESSION.user._id, {
+          body: {
+            // subject: this.state.items[0].value,
+            // instructor: this.state.items[1].value,
+            // room: this.state.items[2].value,
+            // days: this.state.items[3].value,
+            // starttime: this.state.items[4].value,
+            // endtime: this.state.items[5].value,
+            subject: "AI",
+            instructor: 'Dr. Sabah',
+            room: 'AT1020',
+            days: "M",
+            starttime: '10:00',
+            endtime: '11:30',
+          }
+        })
+
+        console.log(result)
+      }catch(e){
+        console.warn(e)
+      }
     }
   },
 
-  checkIfEmpty: function(){
+  checkIfValid: function(){
     for (var i = 0; i < this.state.items.length; i++) {
       if(i != 1 && this.state.items[i].value ==''){
         ToastAndroid.show(items[i].name + " can not be empty", ToastAndroid.LONG);
